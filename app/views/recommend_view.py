@@ -10,6 +10,7 @@ Engineered for executive clarity, professional academic advising, and frictionle
 """
 
 import io
+import textwrap
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -275,7 +276,7 @@ def render_recommend():
             # Visual progress bar width (normalized 40-100 to 0-100%)
             progress_pct = max(0, min(100, (pred - 40) / 60 * 100))
 
-            card_html = f"""
+            card_html = textwrap.dedent(f"""
             <div class="claude-card" style="padding: 1.4rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center;">
@@ -295,22 +296,19 @@ def render_recommend():
                         </div>
                     </div>
                 </div>
-
                 <div style="margin: 0.8rem 0 0.5rem 0;">
                     <div style="height: 6px; background-color: {CLAUDE['hairline']}; border-radius: 9999px; overflow: hidden;">
                         <div style="height: 100%; width: {progress_pct}%; background-color: {CLAUDE['primary']}; border-radius: 9999px;"></div>
                     </div>
                 </div>
-
                 <p style="color: {CLAUDE['body']}; font-size: 0.91rem; line-height: 1.55; margin: 0.6rem 0 0.6rem 0;">{desc}</p>
-
                 <div style="display: flex; gap: 14px; font-size: 0.82rem; color: {CLAUDE['body_muted']}; background: {CLAUDE['surface_soft']}; padding: 7px 12px; border-radius: 8px; border: 1px solid {CLAUDE['hairline']}; flex-wrap: wrap;">
                     <div>Rank Score: <strong style="color: {CLAUDE['ink']};">{combined:.1f}</strong></div>
                     <div>Peer Average (15 Nearest): <strong style="color: {CLAUDE['ink']};">{sim_avg:.1f}</strong></div>
                     <div>Model Precision (SD): <strong style="color: {CLAUDE['ink']};">±{row['residual_sd']:.1f} pts</strong></div>
                 </div>
             </div>
-            """
+            """).strip()
             st.markdown(card_html, unsafe_allow_html=True)
 
             with st.expander(f"✦ Explainability Analysis: Why {name} was recommended"):
