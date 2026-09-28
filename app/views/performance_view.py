@@ -13,7 +13,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.utils import get_eda_summary, get_metrics_summary, inject_custom_css, CLAUDE
+from app.utils import get_eda_summary, get_metrics_summary, inject_custom_css, CLAUDE, PLOTLY_CONFIG
 
 
 def render_performance():

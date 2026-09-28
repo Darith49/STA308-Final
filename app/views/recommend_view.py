@@ -10,6 +10,7 @@ Engineered for executive clarity, professional academic advising, and frictionle
 """
 
 import io
+import numpy as np
 import pandas as pd
 import streamlit as st
 
