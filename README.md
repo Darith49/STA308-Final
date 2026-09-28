@@ -1,7 +1,8 @@
 # 🎓 Course Recommendation System
 
 **STA308 Final Project | Machine Learning & Statistical Computing**  
-*Stack: Python 3.11+ • Streamlit • Scikit-Learn • Plotly*
+*Stack: Python 3.11+ • Streamlit • Scikit-Learn • Plotly*  
+*Design System: [Anthropic Claude Warm Editorial](https://github.com/VoltAgent/awesome-design-md/blob/main/design-md/claude/DESIGN.md)*
 
 ---
 

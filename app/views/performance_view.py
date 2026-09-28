@@ -1,11 +1,11 @@
 """
 Model Performance View for Course Recommendation System.
-Section 5.5 of the Project Plan:
-- Benchmarking comparison table: Baseline Mean, Student GPA Baseline, Linear Regression, Ridge Regression, Random Forest
-- Recommender quality metrics: Precision@3, Recall@3, NDCG@3, Catalog Coverage
-- Interactive diagnostic charts: RMSE comparison bars, predicted vs actual scatter, residual plots, feature coefficients
-- Fairness & stability diagnostic box
-- Statistical significance summary text
+Redesigned with the Claude Design System:
+- Editorial serif headings and humanist body typography
+- 5-fold cross-validation benchmarking table
+- Dark product surface cards for diagnostic metrics
+- Claude color palette for regression coefficients and metric bars
+- Fairness and subgroup error parity auditing
 """
 
 import pandas as pd
@@ -13,60 +13,91 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.utils import get_eda_summary, get_metrics_summary, inject_custom_css, OKABE_ITO
+from app.utils import get_eda_summary, get_metrics_summary, inject_custom_css, CLAUDE
 
 
 def render_performance():
-    """Render the Model Performance & Evaluation page."""
+    """Render the Model Performance & Evaluation page in Claude aesthetic."""
     inject_custom_css()
     metrics = get_metrics_summary()
     eda = get_eda_summary()
 
     st.markdown(
         """
-        <div style="margin-bottom: 1.5rem;">
-            <h1 style="margin: 0; font-weight: 800; font-size: 2rem; color: #0F172A;">Model Performance & Validation</h1>
-            <p style="color: #64748B; margin-top: 4px; font-size: 1rem;">
-                Rigorous cross-validation benchmarks comparing baseline heuristics, parametric regressors, and ensemble trees.
+        <div style="margin-bottom: 1.6rem;">
+            <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: 2.3rem; color: #141413;">Model Performance & Validation</h1>
+            <p style="color: #6c6a64; margin-top: 6px; font-size: 1.05rem; line-height: 1.5;">
+                5-fold cross-validation benchmarks comparing baseline heuristics, parametric regularized regressors, and tree ensembles.
             </p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # 1. Executive Summary Metrics Cards
     comp_df = pd.DataFrame(metrics["comparison_table"])
     ridge_row = comp_df[comp_df["Model"] == "Ridge Regression"].iloc[0]
     base_row = comp_df[comp_df["Model"] == "Baseline Mean"].iloc[0]
     rank_metrics = metrics["ranking_metrics"]
 
+    # 1. Executive Summary Cards
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Primary Model RMSE", f"{ridge_row['RMSE']:.2f}", delta=f"-{ridge_row['RMSE_Improvement_Pct']:.1f}% vs Mean", delta_color="inverse")
+        st.markdown(
+            f"""
+            <div class="claude-stat">
+                <div class="claude-stat-value">{ridge_row['RMSE']:.2f}</div>
+                <div class="claude-stat-label">Ridge RMSE (pts)</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     with col2:
-        st.metric("Mean Absolute Error (MAE)", f"{ridge_row['MAE']:.2f} pts")
+        st.markdown(
+            f"""
+            <div class="claude-stat">
+                <div class="claude-stat-value">{ridge_row['RMSE_Improvement_Pct']:.1f}%</div>
+                <div class="claude-stat-label">Error Reduction</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     with col3:
-        st.metric("Top-3 NDCG", f"{rank_metrics['ndcg_at_3']:.3f}", delta=f"+{rank_metrics['ndcg_at_3'] - rank_metrics['popularity_baseline_ndcg']:.3f} vs Pop")
+        st.markdown(
+            f"""
+            <div class="claude-stat">
+                <div class="claude-stat-value">{rank_metrics['ndcg_at_3']:.3f}</div>
+                <div class="claude-stat-label">NDCG@3 Ranking</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     with col4:
-        st.metric("Catalog Coverage", f"{rank_metrics['catalog_coverage']:.1f}%", delta="100% Eligible Catalog")
+        st.markdown(
+            f"""
+            <div class="claude-stat">
+                <div class="claude-stat-value">{rank_metrics['catalog_coverage']:.0f}%</div>
+                <div class="claude-stat-label">Catalog Coverage</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 1.2rem;'></div>", unsafe_allow_html=True)
 
-    # Text summary highlighting significance
+    # Statistical significance summary box
     st.markdown(
         f"""
-        <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 10px; padding: 1rem 1.2rem; color: #166534; font-size: 0.92rem; margin-bottom: 1.5rem;">
-            <strong>🏆 Statistical Validation Summary:</strong> The production Ridge Regression model achieves an RMSE of <strong>{ridge_row['RMSE']:.2f}</strong>,
-            reducing predictive error by <strong>{ridge_row['RMSE_Improvement_Pct']:.1f}%</strong> compared to the unconditional mean baseline and outperforming simple student GPA heuristics ($R^2 = {ridge_row['R2']:.3f}$, $p < 0.001$).
-            In recommendation ranking, it delivers an NDCG@3 of <strong>{rank_metrics['ndcg_at_3']:.3f}</strong>, significantly exceeding popularity-based recommendations.
+        <div class="claude-callout">
+            <strong>Statistical Validation Takeaway:</strong> The production Ridge Regression model achieves an out-of-fold RMSE of <strong>{ridge_row['RMSE']:.2f} points</strong> ($R^2 = {ridge_row['R2']:.3f}$),
+            reducing prediction error by <strong>{ridge_row['RMSE_Improvement_Pct']:.1f}%</strong> compared to unconditional mean baselines and outperforming student GPA heuristics. In recommendation ranking, it achieves an NDCG@3 of <strong>{rank_metrics['ndcg_at_3']:.3f}</strong>, significantly exceeding popularity-based recommendations ($p < 0.001$).
         </div>
         """,
         unsafe_allow_html=True
     )
 
     # 2. Comprehensive Model Comparison Table & Chart
-    st.subheader("1. Cross-Validated Model Comparison")
-    st.caption("5-fold cross-validation results evaluated on unseen validation splits across all courses.")
+    st.markdown("<h2>1. Cross-Validated Model Comparison</h2>", unsafe_allow_html=True)
+    st.caption("5-fold cross-validation evaluated across all unseen validation folds.")
 
     comp_c1, comp_c2 = st.columns([1.3, 1.7])
     with comp_c1:
@@ -87,13 +118,13 @@ def render_performance():
         fig_comp.add_trace(go.Bar(
             x=comp_df["Model"],
             y=comp_df["RMSE"],
-            marker_color=[OKABE_ITO["gray"], OKABE_ITO["yellow"], OKABE_ITO["sky_blue"], OKABE_ITO["blue"], OKABE_ITO["purple"]],
+            marker_color=[CLAUDE["muted_soft"], CLAUDE["surface_cream_strong"], CLAUDE["accent_amber"], CLAUDE["primary"], CLAUDE["surface_dark"]],
             text=comp_df["RMSE"].round(2),
             textposition="auto"
         ))
         fig_comp.update_layout(
-            title="RMSE by Model Family (Lower is Better)",
-            yaxis_title="Root Mean Squared Error (pts)",
+            title=dict(text="RMSE by Model Family (Lower is Better)", font=dict(family="Newsreader", size=15, color=CLAUDE["ink"])),
+            yaxis=dict(title="Root Mean Squared Error (pts)", gridcolor=CLAUDE["hairline"]),
             margin=dict(l=20, r=20, t=40, b=40),
             height=280,
             paper_bgcolor="rgba(0,0,0,0)",
@@ -101,18 +132,18 @@ def render_performance():
         )
         st.plotly_chart(fig_comp, use_container_width=True)
 
-    st.markdown("<hr style='margin: 1.5rem 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 0; border-top: 1px solid #e6dfd8; margin: 1.8rem 0;'>", unsafe_allow_html=True)
 
     # 3. Recommendation Quality Metrics
-    st.subheader("2. Recommendation Ranking Quality")
+    st.markdown("<h2>2. Recommendation Ranking Quality</h2>", unsafe_allow_html=True)
     rec_c1, rec_c2, rec_c3 = st.columns(3)
     with rec_c1:
         st.markdown(
             f"""
-            <div class="stat-box">
-                <div class="stat-value">{rank_metrics['precision_at_3']:.3f}</div>
-                <div class="stat-label">Precision@3</div>
-                <p style="font-size: 0.8rem; color: #64748B; margin: 4px 0 0 0;">Proportion of recommended electives that are in student's true top-3.</p>
+            <div class="claude-card">
+                <div style="font-family: 'Newsreader', serif; font-size: 1.8rem; color: {CLAUDE['primary']}; font-weight: 500;">{rank_metrics['precision_at_3']:.3f}</div>
+                <div style="font-weight: 600; font-size: 0.82rem; color: {CLAUDE['ink']}; text-transform: uppercase; margin-top: 4px;">Precision@3</div>
+                <p style="font-size: 0.85rem; color: {CLAUDE['muted']}; margin: 6px 0 0 0; line-height: 1.45;">Proportion of recommended electives matching student's true top-3.</p>
             </div>
             """,
             unsafe_allow_html=True
@@ -120,10 +151,10 @@ def render_performance():
     with rec_c2:
         st.markdown(
             f"""
-            <div class="stat-box">
-                <div class="stat-value">{rank_metrics['ndcg_at_3']:.3f}</div>
-                <div class="stat-label">NDCG@3 (Ranking Accuracy)</div>
-                <p style="font-size: 0.8rem; color: #64748B; margin: 4px 0 0 0;">Normalized Discounted Cumulative Gain accounting for position discount.</p>
+            <div class="claude-card">
+                <div style="font-family: 'Newsreader', serif; font-size: 1.8rem; color: {CLAUDE['primary']}; font-weight: 500;">{rank_metrics['ndcg_at_3']:.3f}</div>
+                <div style="font-weight: 600; font-size: 0.82rem; color: {CLAUDE['ink']}; text-transform: uppercase; margin-top: 4px;">NDCG@3</div>
+                <p style="font-size: 0.85rem; color: {CLAUDE['muted']}; margin: 6px 0 0 0; line-height: 1.45;">Discounted cumulative gain measuring rank position correctness.</p>
             </div>
             """,
             unsafe_allow_html=True
@@ -131,26 +162,26 @@ def render_performance():
     with rec_c3:
         st.markdown(
             f"""
-            <div class="stat-box">
-                <div class="stat-value">{rank_metrics['catalog_coverage']:.1f}%</div>
-                <div class="stat-label">Catalog Coverage</div>
-                <p style="font-size: 0.8rem; color: #64748B; margin: 4px 0 0 0;">Percentage of elective courses actively recommended across the student body.</p>
+            <div class="claude-card">
+                <div style="font-family: 'Newsreader', serif; font-size: 1.8rem; color: {CLAUDE['primary']}; font-weight: 500;">{rank_metrics['catalog_coverage']:.1f}%</div>
+                <div style="font-weight: 600; font-size: 0.82rem; color: {CLAUDE['ink']}; text-transform: uppercase; margin-top: 4px;">Catalog Coverage</div>
+                <p style="font-size: 0.85rem; color: {CLAUDE['muted']}; margin: 6px 0 0 0; line-height: 1.45;">All eligible electives are represented across student profiles.</p>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-    st.markdown("<hr style='margin: 1.5rem 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 0; border-top: 1px solid #e6dfd8; margin: 1.8rem 0;'>", unsafe_allow_html=True)
 
-    # 4. Elective-Specific Diagnostic Insights
-    st.subheader("3. Per-Elective Residual Standard Deviations & Coefficients")
+    # 4. Elective Regression Diagnostics & Dark Product Surface Card
+    st.markdown("<h2>3. Per-Elective Residual Standards & Feature Weights</h2>", unsafe_allow_html=True)
     
     per_elec = metrics["per_elective"]
     elec_list = list(per_elec.keys())
     selected_elec = st.selectbox(
-        "Select elective course to inspect model coefficients:",
+        "Select an elective course to inspect model parameters:",
         options=elec_list,
-        format_func=lambda x: f"{x} - {per_elec[x]['name']}"
+        format_func=lambda x: f"{x} — {per_elec[x]['name']}"
     )
 
     elec_stats = per_elec[selected_elec]
@@ -158,17 +189,16 @@ def render_performance():
 
     diag_c1, diag_c2 = st.columns([1.5, 1.0])
     with diag_c1:
-        # Coefficient bar chart
         fig_coef = go.Figure(go.Bar(
             x=list(coef_dict.keys()),
             y=list(coef_dict.values()),
-            marker_color=[OKABE_ITO["green"] if v >= 0 else OKABE_ITO["vermilion"] for v in coef_dict.values()],
+            marker_color=[CLAUDE["primary"] if v >= 0 else CLAUDE["muted_soft"] for v in coef_dict.values()],
             text=[f"{v:+.2f}" for v in coef_dict.values()],
             textposition="auto"
         ))
         fig_coef.update_layout(
-            title=f"Standardized Regression Coefficients: {elec_stats['name']}",
-            yaxis_title="Effect on Final Grade per 1 SD in Core Subject",
+            title=dict(text=f"Regression Coefficients: {elec_stats['name']}", font=dict(family="Newsreader", size=15, color=CLAUDE["ink"])),
+            yaxis=dict(title="Effect per 1 SD in Core Subject", gridcolor=CLAUDE["hairline"]),
             margin=dict(l=20, r=20, t=40, b=40),
             height=300,
             paper_bgcolor="rgba(0,0,0,0)",
@@ -179,50 +209,52 @@ def render_performance():
     with diag_c2:
         st.markdown(
             f"""
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.2rem; height: 100%;">
-                <h4 style="margin: 0 0 0.8rem 0; color: #0F172A;">Diagnostic Metrics</h4>
-                <div style="margin-bottom: 8px;"><strong>Residual SD ($\\sigma_\\epsilon$):</strong> {elec_stats['residual_sd']:.2f} pts</div>
-                <div style="margin-bottom: 8px;"><strong>Cross-Val RMSE:</strong> {elec_stats['rmse']:.2f} pts</div>
-                <div style="margin-bottom: 8px;"><strong>Cross-Val MAE:</strong> {elec_stats['mae']:.2f} pts</div>
-                <div style="margin-bottom: 8px;"><strong>Cross-Val $R^2$:</strong> {elec_stats['r2']:.3f}</div>
-                <div style="margin-bottom: 8px;"><strong>Baseline Intercept ($\\beta_0$):</strong> {elec_stats['intercept']:.1f}</div>
-                <p style="font-size: 0.82rem; color: #64748B; margin-top: 10px;">
-                    The 95% prediction interval is computed as $\\hat{{y}} \\pm 1.96 \\times {elec_stats['residual_sd']:.2f} = [{elec_stats['residual_sd'] * 1.96:.1f}\\text{{ pts}}]$.
+            <div class="claude-dark-card" style="height: 100%;">
+                <div style="font-family: 'Newsreader', serif; font-size: 1.25rem; color: {CLAUDE['on_dark']}; margin-bottom: 0.8rem;">Diagnostic Metrics</div>
+                <div style="font-size: 0.84rem; line-height: 1.8; color: {CLAUDE['on_dark_soft']};">
+                    • <strong>Residual SD ($\\sigma_\\epsilon$):</strong> <span style="color: {CLAUDE['accent_teal']};">{elec_stats['residual_sd']:.2f} pts</span><br>
+                    • <strong>Cross-Val RMSE:</strong> {elec_stats['rmse']:.2f} pts<br>
+                    • <strong>Cross-Val MAE:</strong> {elec_stats['mae']:.2f} pts<br>
+                    • <strong>Cross-Val $R^2$:</strong> {elec_stats['r2']:.3f}<br>
+                    • <strong>Baseline Intercept ($\\beta_0$):</strong> {elec_stats['intercept']:.1f}<br>
+                </div>
+                <p style="font-size: 0.78rem; color: {CLAUDE['on_dark_soft']}; margin-top: 10px; border-top: 1px solid #252320; padding-top: 8px;">
+                    95% prediction interval: $\\hat{{y}} \\pm 1.96 \\times {elec_stats['residual_sd']:.2f} = [{elec_stats['residual_sd'] * 1.96:.1f}\\text{{ pts}}]$.
                 </p>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-    # 5. Fairness & Stability Box
-    st.subheader("4. Fairness, Robustness & Subgroup Stability")
+    # 5. Fairness & Subgroup Stability Box
+    st.markdown("<h2>4. Fairness & Subgroup Stability</h2>", unsafe_allow_html=True)
     st.markdown(
-        """
-        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.2rem; margin-top: 0.5rem;">
-            <h4 style="margin: 0 0 0.5rem 0; color: #0F172A;">Subgroup & Academic Archetype Error Parity</h4>
-            <p style="font-size: 0.9rem; color: #475569; margin: 0 0 0.8rem 0;">
+        f"""
+        <div class="claude-card" style="margin-top: 0.5rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-family: 'Newsreader', serif; font-size: 1.25rem; color: {CLAUDE['ink']};">Cross-Archetype Error Parity Audit</h4>
+            <p style="font-size: 0.9rem; color: {CLAUDE['muted']}; margin: 0 0 0.8rem 0;">
                 Model error metrics were audited across all 4 student clusters to verify predictive stability across disparate academic backgrounds:
             </p>
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 10px; border-radius: 8px; text-align: center;">
-                    <div style="font-weight: 700; color: #1E293B;">Quantitative</div>
-                    <div style="font-size: 0.85rem; color: #64748B;">RMSE: 3.72 pts</div>
+                <div style="background: {CLAUDE['canvas']}; border: 1px solid {CLAUDE['hairline']}; padding: 10px; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 600; color: {CLAUDE['ink']}; font-size: 0.9rem;">Quantitative</div>
+                    <div style="font-size: 0.85rem; color: {CLAUDE['muted']};">RMSE: 3.72 pts</div>
                 </div>
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 10px; border-radius: 8px; text-align: center;">
-                    <div style="font-weight: 700; color: #1E293B;">Balanced</div>
-                    <div style="font-size: 0.85rem; color: #64748B;">RMSE: 3.81 pts</div>
+                <div style="background: {CLAUDE['canvas']}; border: 1px solid {CLAUDE['hairline']}; padding: 10px; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 600; color: {CLAUDE['ink']}; font-size: 0.9rem;">Balanced</div>
+                    <div style="font-size: 0.85rem; color: {CLAUDE['muted']};">RMSE: 3.81 pts</div>
                 </div>
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 10px; border-radius: 8px; text-align: center;">
-                    <div style="font-weight: 700; color: #1E293B;">Computational</div>
-                    <div style="font-size: 0.85rem; color: #64748B;">RMSE: 3.69 pts</div>
+                <div style="background: {CLAUDE['canvas']}; border: 1px solid {CLAUDE['hairline']}; padding: 10px; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 600; color: {CLAUDE['ink']}; font-size: 0.9rem;">Computational</div>
+                    <div style="font-size: 0.85rem; color: {CLAUDE['muted']};">RMSE: 3.69 pts</div>
                 </div>
-                <div style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 10px; border-radius: 8px; text-align: center;">
-                    <div style="font-weight: 700; color: #1E293B;">Socio-Economic</div>
-                    <div style="font-size: 0.85rem; color: #64748B;">RMSE: 3.78 pts</div>
+                <div style="background: {CLAUDE['canvas']}; border: 1px solid {CLAUDE['hairline']}; padding: 10px; border-radius: 8px; text-align: center;">
+                    <div style="font-weight: 600; color: {CLAUDE['ink']}; font-size: 0.9rem;">Socio-Economic</div>
+                    <div style="font-size: 0.85rem; color: {CLAUDE['muted']};">RMSE: 3.78 pts</div>
                 </div>
             </div>
-            <p style="font-size: 0.82rem; color: #059669; font-weight: 600; margin: 0.8rem 0 0 0;">
-                ✓ Maximum cross-archetype RMSE gap is within 0.12 points, confirming strong error parity across student specializations.
+            <p style="font-size: 0.82rem; color: {CLAUDE['accent_teal']}; font-weight: 600; margin: 0.8rem 0 0 0;">
+                ✦ Maximum cross-archetype RMSE gap is within 0.12 points, confirming strong error parity across student specializations.
             </p>
         </div>
         """,

@@ -1,12 +1,11 @@
 """
 Explore Data View for Course Recommendation System.
-Section 5.4 of the Project Plan:
-- Precomputed from models/eda_summary.json (fast, no runtime training)
-- Tabs:
-  1. Distributions: Histograms, summary statistics, interactive subject selector
-  2. Correlations: Full interactive correlation heatmap with hover annotations
-  3. Profiles: Scree plot (PCA variance), PCA loadings table, cluster distribution
-  4. Electives: Grade distributions, enrolment breakdown, and course details
+Redesigned with the Claude Design System:
+- Warm cream canvas with editorial serif headings
+- Tabs styled with subtle hairlines
+- Histograms in signature warm coral (#cc785c)
+- Heatmaps in warm cream-to-terracotta gradient
+- Scree plots and cluster distributions using Claude color tokens
 """
 
 import pandas as pd
@@ -14,21 +13,21 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.utils import get_eda_summary, inject_custom_css, OKABE_ITO
+from app.utils import get_eda_summary, inject_custom_css, CLAUDE
 from src.recommend import CORE_SUBJECTS
 
 
 def render_explore():
-    """Render the Explore Cohort Data page."""
+    """Render the Explore Cohort Data page in Claude aesthetic."""
     inject_custom_css()
     eda = get_eda_summary()
 
     st.markdown(
         """
-        <div style="margin-bottom: 1.5rem;">
-            <h1 style="margin: 0; font-weight: 800; font-size: 2rem; color: #0F172A;">Explore Cohort Dataset</h1>
-            <p style="color: #64748B; margin-top: 4px; font-size: 1rem;">
-                Investigate distributions, correlation structures, principal component loadings, and clustering profiles across 1,200 students.
+        <div style="margin-bottom: 1.6rem;">
+            <h1 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: 2.3rem; color: #141413;">Explore Cohort Dataset</h1>
+            <p style="color: #6c6a64; margin-top: 6px; font-size: 1.05rem; line-height: 1.5;">
+                Investigate grade distributions, correlation structures, latent principal components, and academic clusters across 1,200 students.
             </p>
         </div>
         """,
@@ -36,15 +35,15 @@ def render_explore():
     )
 
     tab1, tab2, tab3, tab4 = st.tabs([
-        "📊 Distributions & Summary",
-        "🔥 Correlation Heatmap",
-        "🧭 Academic Profiles & PCA",
-        "📚 Elective Catalog"
+        "Distributions & Summary",
+        "Correlation Heatmap",
+        "Principal Components & Archetypes",
+        "Elective Catalog"
     ])
 
     # TAB 1: DISTRIBUTIONS
     with tab1:
-        st.subheader("Grade Distributions by Subject")
+        st.markdown("<h3>Grade Distributions by Subject</h3>", unsafe_allow_html=True)
         all_subjects = CORE_SUBJECTS + list(eda["electives_meta"].keys())
         
         selected_subject = st.selectbox(
@@ -67,7 +66,7 @@ def render_explore():
         with m_col5:
             st.metric("Max Grade", f"{dist_info['max']:.1f}")
 
-        # Histogram chart
+        # Histogram chart in Warm Coral
         hist_data = dist_info["histogram"]
         bin_labels = [
             f"{hist_data['bin_edges'][i]:.0f}-{hist_data['bin_edges'][i+1]:.0f}"
@@ -77,22 +76,21 @@ def render_explore():
         fig_hist = go.Figure(go.Bar(
             x=bin_labels,
             y=hist_data["counts"],
-            marker_color=OKABE_ITO["blue"],
+            marker_color=CLAUDE["primary"],
             hovertemplate="Score range %{x}: %{y} students<extra></extra>"
         ))
         fig_hist.update_layout(
-            title=f"Histogram of Student Performance: {selected_subject}",
-            xaxis_title="Grade Bins (0 - 100)",
-            yaxis_title="Student Count",
+            title=dict(text=f"Distribution of Student Performance: {selected_subject}", font=dict(family="Newsreader", size=16, color=CLAUDE["ink"])),
+            xaxis=dict(title=dict(text="Grade Bins (0 - 100)", font=dict(family="Inter", size=11, color=CLAUDE["muted"])), gridcolor=CLAUDE["hairline"]),
+            yaxis=dict(title=dict(text="Student Count", font=dict(family="Inter", size=11, color=CLAUDE["muted"])), gridcolor=CLAUDE["hairline"]),
             margin=dict(l=20, r=20, t=40, b=40),
-            height=340,
+            height=330,
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)"
         )
         st.plotly_chart(fig_hist, use_container_width=True)
 
-        # Summary statistics table for all core subjects
-        st.markdown("#### Summary Statistics (Core Subjects)")
+        st.markdown("<h4>Summary Statistics (Core Foundation Courses)</h4>", unsafe_allow_html=True)
         summary_rows = []
         for s in CORE_SUBJECTS:
             d = eda["distributions"][s]
@@ -111,47 +109,54 @@ def render_explore():
 
     # TAB 2: CORRELATIONS
     with tab2:
-        st.subheader("Bivariate Correlation Matrix")
+        st.markdown("<h3>Bivariate Correlation Matrix</h3>", unsafe_allow_html=True)
         st.caption("Pearson correlation coefficients across foundation courses and elective performance.")
 
         corr_dict = eda["correlations"]
         corr_cols = CORE_SUBJECTS + [e for e in eda["electives_meta"].keys()]
         corr_matrix = pd.DataFrame(corr_dict).loc[corr_cols, corr_cols]
 
-        # Rename for clean readability
         display_names = [eda["electives_meta"][c]["name"] if c in eda["electives_meta"] else c for c in corr_cols]
 
         fig_corr = px.imshow(
             corr_matrix.values,
             x=display_names,
             y=display_names,
-            color_continuous_scale="Blues",
+            color_continuous_scale=[
+                [0.0, CLAUDE["canvas"]],
+                [0.4, CLAUDE["surface_cream_strong"]],
+                [0.7, CLAUDE["accent_amber"]],
+                [1.0, CLAUDE["primary"]]
+            ],
             zmin=0.0,
             zmax=1.0,
             labels=dict(color="Correlation")
         )
         fig_corr.update_layout(
             height=540,
-            margin=dict(l=20, r=20, t=20, b=40)
+            margin=dict(l=20, r=20, t=20, b=40),
+            paper_bgcolor="rgba(0,0,0,0)"
         )
         st.plotly_chart(fig_corr, use_container_width=True)
 
         st.markdown(
             """
-            **Key Correlation Takeaways:**
-            - **Quantitative Coupling:** Calculus, Statistics, and Physics exhibit strong pairwise positive correlations ($r \approx 0.65 - 0.72$), reflecting shared mathematical foundations.
-            - **Domain Predictability:** Econometrics strongly tracks Statistics and Calculus, while Data Mining strongly tracks Programming and Statistics.
-            - **Orthogonal Verbal Signal:** English exhibits distinct variance ($r \approx 0.35 - 0.45$ against STEM subjects), providing crucial discriminative power for NLP and Corporate Finance.
-            """
+            <div class="claude-callout">
+                <strong>Empirical Correlation Findings:</strong><br>
+                • <strong>Quantitative Synergies:</strong> Calculus, Statistics, and Physics exhibit strong positive correlations ($r \approx 0.65 - 0.72$), reflecting shared mathematical foundations.<br>
+                • <strong>Predictive Coupling:</strong> Econometrics performance correlates tightly with Statistics and Calculus, while Data Mining aligns with Programming and Statistics.<br>
+                • <strong>Verbal Orthogonality:</strong> English provides discriminative variance ($r \approx 0.35 - 0.45$ against STEM courses), serving as a crucial differentiator for NLP and Corporate Finance.
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
     # TAB 3: PROFILES & PCA
     with tab3:
-        st.subheader("Principal Component Analysis & Latent Dimensions")
+        st.markdown("<h3>Principal Component Analysis (PCA)</h3>", unsafe_allow_html=True)
         
         pca_c1, pca_c2 = st.columns(2)
         with pca_c1:
-            # Scree Plot
             var_ratios = eda["pca_variance_ratio"]
             pc_labels = [f"PC{i+1}" for i in range(len(var_ratios))]
             cum_var = [sum(var_ratios[:i+1]) * 100 for i in range(len(var_ratios))]
@@ -161,62 +166,64 @@ def render_explore():
                 x=pc_labels,
                 y=[v * 100 for v in var_ratios],
                 name="Individual Explained Variance (%)",
-                marker_color=OKABE_ITO["sky_blue"]
+                marker_color=CLAUDE["accent_amber"]
             ))
             fig_scree.add_trace(go.Scatter(
                 x=pc_labels,
                 y=cum_var,
                 name="Cumulative Variance (%)",
                 mode="lines+markers",
-                line=dict(color=OKABE_ITO["vermilion"], width=2.5)
+                line=dict(color=CLAUDE["primary"], width=2.5)
             ))
             fig_scree.update_layout(
-                title="Scree Plot: Explained Variance by Component",
-                yaxis_title="Variance Explained (%)",
+                title=dict(text="Scree Plot: Explained Variance by Component", font=dict(family="Newsreader", size=15, color=CLAUDE["ink"])),
+                yaxis=dict(title="Variance Explained (%)", gridcolor=CLAUDE["hairline"]),
                 legend=dict(orientation="h", y=-0.2),
                 height=340,
-                margin=dict(l=20, r=20, t=40, b=40)
+                margin=dict(l=20, r=20, t=40, b=40),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             st.plotly_chart(fig_scree, use_container_width=True)
 
         with pca_c2:
-            st.markdown("#### Component Factor Loadings")
+            st.markdown("<h4>Factor Loadings Matrix</h4>", unsafe_allow_html=True)
             loadings_df = pd.DataFrame(eda["pca_loadings"])
             st.dataframe(loadings_df, use_container_width=True)
             st.caption(
-                "**PC1 (Aptitude):** General academic performance across all courses. "
-                "**PC2 (Verbal vs Math):** Strong contrast between English/Economics and Physics/Calculus. "
-                "**PC3 (Applied Tech):** High positive loading on Programming."
+                "• **PC1 (General Aptitude):** Positive loadings across all foundation courses. "
+                "• **PC2 (Verbal vs Math):** Contrast between English/Economics and Calculus/Physics. "
+                "• **PC3 (Applied Tech):** Dominated by Programming proficiency."
             )
 
-        st.markdown("<hr style='margin: 1.2rem 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border: 0; border-top: 1px solid #e6dfd8; margin: 1.5rem 0;'>", unsafe_allow_html=True)
 
-        # Cluster Archetypes Breakdown
-        st.subheader("Cluster Archetypes (K-Means)")
+        st.markdown("<h3>Academic Archetype Clustering (K-Means)</h3>", unsafe_allow_html=True)
         cl_c1, cl_c2 = st.columns([1.2, 1.8])
         with cl_c1:
             cl_counts = eda["cluster_counts"]
             fig_pie = px.pie(
                 names=list(cl_counts.keys()),
                 values=list(cl_counts.values()),
-                color_discrete_sequence=[OKABE_ITO["blue"], OKABE_ITO["green"], OKABE_ITO["orange"], OKABE_ITO["purple"]],
+                color_discrete_sequence=[CLAUDE["primary"], CLAUDE["accent_teal"], CLAUDE["accent_amber"], CLAUDE["surface_dark"]],
                 hole=0.45
             )
             fig_pie.update_layout(
-                title="Student Distribution Across Archetypes",
+                title=dict(text="Cohort Archetype Distribution", font=dict(family="Newsreader", size=15, color=CLAUDE["ink"])),
                 height=340,
-                margin=dict(l=10, r=10, t=40, b=20)
+                margin=dict(l=10, r=10, t=40, b=20),
+                paper_bgcolor="rgba(0,0,0,0)"
             )
             st.plotly_chart(fig_pie, use_container_width=True)
 
         with cl_c2:
-            st.markdown("#### Mean Grades by Academic Archetype")
+            st.markdown("<h4>Mean Foundation Grades by Archetype</h4>", unsafe_allow_html=True)
             cl_means_df = pd.DataFrame(eda["cluster_means"]).T
             st.dataframe(cl_means_df, use_container_width=True)
 
     # TAB 4: ELECTIVES
     with tab4:
-        st.subheader("Elective Course Offerings")
+        st.markdown("<h3>Elective Course Offerings</h3>", unsafe_allow_html=True)
         
         elec_rows = []
         for eid, info in eda["electives_meta"].items():
@@ -225,8 +232,8 @@ def render_explore():
                 "Code": eid,
                 "Course Name": info["name"],
                 "Discipline": info["category"],
-                "Mean Grade": d.get("mean", "-"),
+                "Cohort Mean": d.get("mean", "-"),
                 "Std Dev": d.get("std", "-"),
-                "Description": info["description"]
+                "Course Description": info["description"]
             })
         st.dataframe(pd.DataFrame(elec_rows), use_container_width=True, hide_index=True)
