@@ -47,10 +47,19 @@ PAGES = [
 if "current_page" not in st.session_state:
     st.session_state.current_page = "Home"
 
+if "nav_radio" not in st.session_state:
+    st.session_state.nav_radio = st.session_state.current_page
+
+
+def on_nav_change():
+    """Single-pass transition callback preventing double reruns."""
+    st.session_state.current_page = st.session_state.nav_radio
+
 
 def navigate_to(page_name: str):
     """Programmatic page transition helper."""
     st.session_state.current_page = page_name
+    st.session_state.nav_radio = page_name
     st.rerun()
 
 
@@ -79,17 +88,15 @@ with st.sidebar:
         "Methodology & Ethics": "Methodology & Ethics"
     }
 
-    selected = st.radio(
+    st.radio(
         "Navigation",
         options=PAGES,
         index=PAGES.index(st.session_state.current_page),
         format_func=lambda p: f"✦  {page_labels.get(p, p)}",
+        key="nav_radio",
+        on_change=on_nav_change,
         label_visibility="collapsed"
     )
-
-    if selected != st.session_state.current_page:
-        st.session_state.current_page = selected
-        st.rerun()
 
     st.markdown("<hr style='border: 0; border-top: 1px solid #e6dfd8; margin: 1.6rem 0 1rem 0;'>", unsafe_allow_html=True)
     
@@ -110,16 +117,22 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-# Page Router
+# Page Router with animated wrapper container for smooth transitions
 current = st.session_state.current_page
 
-if current == "Home":
-    render_home(navigate_to)
-elif current == "Get Recommendations":
-    render_recommend()
-elif current == "Explore Data":
-    render_explore()
-elif current == "Model Performance":
-    render_performance()
-elif current == "Methodology & Ethics":
-    render_methodology()
+page_container = st.container()
+with page_container:
+    st.markdown('<div class="page-view-enter">', unsafe_allow_html=True)
+
+    if current == "Home":
+        render_home(navigate_to)
+    elif current == "Get Recommendations":
+        render_recommend()
+    elif current == "Explore Data":
+        render_explore()
+    elif current == "Model Performance":
+        render_performance()
+    elif current == "Methodology & Ethics":
+        render_methodology()
+
+    st.markdown('</div>', unsafe_allow_html=True)

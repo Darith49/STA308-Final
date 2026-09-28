@@ -405,6 +405,48 @@ def inject_custom_css():
             margin-bottom: 0.8rem !important;
         }}
 
+        /* Smooth Hardware-Accelerated Page Transitions */
+        @keyframes pageFadeSlideUp {{
+            0% {{
+                opacity: 0;
+                transform: translateY(10px);
+            }}
+            100% {{
+                opacity: 1;
+                transform: translateY(0);
+            }}
+        }}
+
+        .page-view-enter {{
+            animation: pageFadeSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+            will-change: transform, opacity;
+        }}
+
+        /* Smooth tab switching inside views */
+        div[data-testid="stTabs"] div[role="tabpanel"] {{
+            animation: pageFadeSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }}
+
+        /* Suppress jarring Streamlit opacity flicker during reruns */
+        div[data-testid="stAppViewBlockContainer"] {{
+            transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }}
+
+        /* Global smooth transitions for interactive elements */
+        button, a, input, select, div[role="radiogroup"] > label {{
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }}
+
+        .claude-card, .claude-dark-card, .claude-stat, .claude-hero, .claude-callout {{
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                        box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                        border-color 0.2s ease !important;
+        }}
+
+        html {{
+            scroll-behavior: smooth;
+        }}
+
         /* Hide unwanted Plotly and Streamlit auto-margins */
         .block-container {{
             padding-top: 2rem !important;
