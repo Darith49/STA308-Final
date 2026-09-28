@@ -17,6 +17,7 @@ import streamlit as st
 
 from app.utils import (
     create_contribution_bar,
+    create_forest_plot,
     create_interval_bar_chart,
     create_radar_chart,
     get_eda_summary,
@@ -326,11 +327,20 @@ def render_recommend():
                     f"**Peer Cohort Evidence:** Among the 15 historical students with academic profiles most similar to yours, the average grade achieved in {name} was **{sim_avg:.1f}**."
                 )
 
-        # 3. Prediction Intervals Bar Chart
+        # 3. Prediction Intervals & Performance Comparison
         st.markdown("<h2>3. Expected Performance Across All Eligible Electives</h2>", unsafe_allow_html=True)
         st.caption("Point estimates with 95% confidence intervals and 80+ High Distinction benchmark.")
-        interval_chart = create_interval_bar_chart(rec.all_eligible)
-        st.plotly_chart(interval_chart, use_container_width=True, config=PLOTLY_CONFIG)
+
+        chart_tab1, chart_tab2 = st.tabs([
+            "✦ 95% Uncertainty Whisker Plot (Recommended)",
+            "📊 Comparative Ranked Bars"
+        ])
+        with chart_tab1:
+            forest_fig = create_forest_plot(rec.all_eligible)
+            st.plotly_chart(forest_fig, use_container_width=True, config=PLOTLY_CONFIG)
+        with chart_tab2:
+            bar_fig = create_interval_bar_chart(rec.all_eligible)
+            st.plotly_chart(bar_fig, use_container_width=True, config=PLOTLY_CONFIG)
 
         # 4. Interactive Full Catalog Dashboard Table
         st.markdown("<h2>4. Comprehensive Elective Comparison & Gating</h2>", unsafe_allow_html=True)

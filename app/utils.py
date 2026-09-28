@@ -533,68 +533,185 @@ def create_radar_chart(student_grades: dict, cluster_centers: dict, cohort_means
     return fig
 
 
+def create_forest_plot(eligible_df: pd.DataFrame) -> go.Figure:
+    """Create clean, publication-grade Forest / Dot-and-Whisker plot for 95% CI."""
+    plot_df = eligible_df.sort_values(by="combined_score", ascending=True).copy()
+    fig = go.Figure()
+
+    # Distinction benchmark line
+    fig.add_vline(
+        x=80,
+        line_width=1.5,
+        line_dash="dot",
+        line_color=CLAUDE["accent_amber"],
+        annotation_text="  High Distinction (80+)",
+        annotation_position="top left",
+        annotation_font=dict(size=11, color=CLAUDE["accent_amber"], family="Inter")
+    )
+
+    # Add whiskers for each elective
+    for _, row in plot_df.iterrows():
+        is_top3 = row["rank"] <= 3
+        whisker_color = CLAUDE["primary"] if is_top3 else "#a39f97"
+        whisker_width = 3.5 if is_top3 else 2.0
+        
+        # 95% Confidence Interval Line
+        fig.add_trace(go.Scatter(
+            x=[row["interval_lo"], row["interval_hi"]],
+            y=[row["name"], row["name"]],
+            mode="lines",
+            line=dict(color=whisker_color, width=whisker_width),
+            hoverinfo="skip",
+            showlegend=False
+        ))
+        
+        # End caps
+        fig.add_trace(go.Scatter(
+            x=[row["interval_lo"], row["interval_hi"]],
+            y=[row["name"], row["name"]],
+            mode="markers",
+            marker=dict(symbol="line-ns", size=10, line=dict(color=whisker_color, width=2.0)),
+            hoverinfo="skip",
+            showlegend=False
+        ))
+
+    # Other eligible courses markers
+    other_mask = plot_df["rank"] > 3
+    if other_mask.any():
+        fig.add_trace(go.Scatter(
+            x=plot_df[other_mask]["pred_grade"],
+            y=plot_df[other_mask]["name"],
+            mode="markers+text",
+            name="Eligible Electives",
+            marker=dict(
+                size=11,
+                color="#f0ebe4",
+                line=dict(color="#5e5c56", width=2.2)
+            ),
+            text=[f"  {g:.1f}" for g in plot_df[other_mask]["pred_grade"]],
+            textposition="middle right",
+            textfont=dict(family="Inter", size=11, color="#5e5c56"),
+            hovertemplate="<b>%{y}</b><br>Predicted Grade: <b>%{x:.1f}</b><br>Peer Average: %{customdata[0]:.1f}<br>95% CI: [%{customdata[1]:.1f}, %{customdata[2]:.1f}]<extra></extra>",
+            customdata=plot_df[other_mask][["similar_avg", "interval_lo", "interval_hi"]].values
+        ))
+
+    # Top-3 courses markers
+    top3_mask = plot_df["rank"] <= 3
+    if top3_mask.any():
+        fig.add_trace(go.Scatter(
+            x=plot_df[top3_mask]["pred_grade"],
+            y=plot_df[top3_mask]["name"],
+            mode="markers+text",
+            name="★ Top-3 Recommended",
+            marker=dict(
+                size=14,
+                color=CLAUDE["primary"],
+                line=dict(color="#ffffff", width=2.5)
+            ),
+            text=[f"  <b>{g:.1f}</b>" for g in plot_df[top3_mask]["pred_grade"]],
+            textposition="middle right",
+            textfont=dict(family="Inter", size=12, color=CLAUDE["primary"]),
+            hovertemplate="<b>%{y} (Recommended #%{customdata[0]})</b><br>Predicted Grade: <b>%{x:.1f}</b><br>Combined Index: %{customdata[1]:.1f}<br>Peer Average: %{customdata[2]:.1f}<br>95% CI: [%{customdata[3]:.1f}, %{customdata[4]:.1f}]<extra></extra>",
+            customdata=plot_df[top3_mask][["rank", "combined_score", "similar_avg", "interval_lo", "interval_hi"]].values
+        ))
+
+    min_x = max(40, int(plot_df["interval_lo"].min() // 5 * 5) - 5)
+    max_x = min(100, int(plot_df["interval_hi"].max() // 5 * 5) + 10)
+
+    fig.update_layout(
+        xaxis=dict(
+            title=dict(text="Expected Grade & 95% Confidence Interval (Score 0 – 100)", font=dict(family="Inter", size=11, color=CLAUDE["body_muted"])),
+            range=[min_x, max_x],
+            gridcolor=CLAUDE["hairline"],
+            zeroline=False,
+            tickfont=dict(color=CLAUDE["body_muted"], size=10),
+            dtick=5
+        ),
+        yaxis=dict(
+            title="",
+            tickfont=dict(size=12, color=CLAUDE["ink"], family="Inter", weight=500),
+            automargin=True
+        ),
+        margin=dict(l=15, r=40, t=35, b=40),
+        height=max(360, len(plot_df) * 46),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.03,
+            xanchor="left",
+            x=0,
+            font=dict(family="Inter", size=11, color=CLAUDE["body"])
+        )
+    )
+    return fig
+
+
 def create_interval_bar_chart(eligible_df: pd.DataFrame) -> go.Figure:
-    """Create horizontal bar chart with 95% prediction intervals and academic distinction tiers."""
+    """Create modern, slender horizontal bar chart with top-3 coral highlight and clean whiskers."""
     plot_df = eligible_df.sort_values(by="combined_score", ascending=True).copy()
 
     error_minus = plot_df["pred_grade"] - plot_df["interval_lo"]
     error_plus = plot_df["interval_hi"] - plot_df["pred_grade"]
 
+    bar_colors = [CLAUDE["primary"] if r <= 3 else "#d9d2c9" for r in plot_df["rank"]]
+    border_colors = [CLAUDE["primary_hover"] if r <= 3 else "#c0b7ab" for r in plot_df["rank"]]
+
     fig = go.Figure()
 
-    # Reference guide line for Honours / Distinction threshold (80)
+    # Reference guide line for Distinction (80)
     fig.add_vline(
         x=80,
-        line_width=1,
+        line_width=1.5,
         line_dash="dot",
         line_color=CLAUDE["accent_amber"],
-        annotation_text="High Distinction (80+)",
-        annotation_position="top right",
-        annotation_font=dict(size=10, color=CLAUDE["accent_amber"], family="Inter")
+        annotation_text="  High Distinction (80+)",
+        annotation_position="top left",
+        annotation_font=dict(size=11, color=CLAUDE["accent_amber"], family="Inter")
     )
 
     fig.add_trace(go.Bar(
         y=plot_df["name"],
         x=plot_df["pred_grade"],
         orientation="h",
-        name="Predicted Grade",
         marker=dict(
-            color=plot_df["combined_score"],
-            colorscale=[
-                [0.0, CLAUDE["surface_cream_strong"]],
-                [0.45, CLAUDE["accent_amber"]],
-                [1.0, CLAUDE["primary"]]
-            ],
-            line=dict(color=CLAUDE["primary_hover"], width=1.0),
-            showscale=False
+            color=bar_colors,
+            line=dict(color=border_colors, width=1.2)
         ),
+        width=0.45,
         error_x=dict(
             type="data",
             symmetric=False,
             array=error_plus,
             arrayminus=error_minus,
-            color=CLAUDE["ink"],
-            thickness=1.8,
-            width=5
+            color=CLAUDE["body_muted"],
+            thickness=1.4,
+            width=4
         ),
+        text=[f"  {g:.1f}" for g in plot_df["pred_grade"]],
+        textposition="outside",
+        textfont=dict(family="Inter", size=11, color=CLAUDE["ink"], weight=600),
         hovertemplate="<b>%{y}</b><br>Predicted Grade: <b>%{x:.1f}</b><br>Combined Index: %{customdata[0]:.1f}<br>95% CI: [%{customdata[1]:.1f}, %{customdata[2]:.1f}]<extra></extra>",
-        customdata=plot_df[["combined_score", "interval_lo", "interval_hi"]].values
+        customdata=plot_df[["combined_score", "interval_lo", "interval_hi"]].values,
+        showlegend=False
     ))
 
     fig.update_layout(
         xaxis=dict(
             title=dict(text="Expected Grade (0 – 100)", font=dict(family="Inter", size=11, color=CLAUDE["body_muted"])),
-            range=[40, 100],
+            range=[0, 100],
             gridcolor=CLAUDE["hairline"],
             zeroline=False,
             tickfont=dict(color=CLAUDE["body_muted"], size=10)
         ),
         yaxis=dict(
             title="",
-            tickfont=dict(size=11, color=CLAUDE["ink"], family="Inter", weight=500)
+            tickfont=dict(size=12, color=CLAUDE["ink"], family="Inter", weight=500),
+            automargin=True
         ),
-        margin=dict(l=10, r=20, t=25, b=35),
-        height=max(300, len(plot_df) * 40),
+        margin=dict(l=15, r=40, t=35, b=40),
+        height=max(360, len(plot_df) * 46),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)"
     )

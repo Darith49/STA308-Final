@@ -16,6 +16,7 @@ from app.utils import (
     get_metrics_summary,
     get_sample_profiles,
     create_radar_chart,
+    create_forest_plot,
     create_interval_bar_chart,
     create_contribution_bar
 )
@@ -58,6 +59,9 @@ def test_plotly_chart_builders():
 
     interval_fig = create_interval_bar_chart(rec.all_eligible)
     assert interval_fig is not None
+
+    forest_fig = create_forest_plot(rec.all_eligible)
+    assert forest_fig is not None
 
     top_eid = rec.top_electives.iloc[0]["elective_id"]
     c_list = rec.explanations[top_eid]
