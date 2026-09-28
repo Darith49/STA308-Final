@@ -130,7 +130,7 @@ def render_performance():
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)"
         )
-        st.plotly_chart(fig_comp, use_container_width=True)
+        st.plotly_chart(fig_comp, use_container_width=True, config=PLOTLY_CONFIG)
 
     st.markdown("<hr style='border: 0; border-top: 1px solid #e6dfd8; margin: 1.8rem 0;'>", unsafe_allow_html=True)
 
@@ -204,7 +204,7 @@ def render_performance():
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)"
         )
-        st.plotly_chart(fig_coef, use_container_width=True)
+        st.plotly_chart(fig_coef, use_container_width=True, config=PLOTLY_CONFIG)
 
     with diag_c2:
         st.markdown(
