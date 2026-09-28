@@ -1,0 +1,33 @@
+{
+  "project": "STA308 Course Recommendation System",
+  "version": "1.0.0",
+  "training_date": "2026-09-28 20:35:19",
+  "random_seed": 42,
+  "n_students": 1200,
+  "data_source": "Synthesized academic cohort modeling realistic STA308 university distributions and latent factor structure",
+  "subject_list": [
+    "Calculus",
+    "Statistics",
+    "Programming",
+    "English",
+    "Physics",
+    "Economics"
+  ],
+  "elective_list": [
+    "ELEC_ECON",
+    "ELEC_DATAMIN",
+    "ELEC_OPER",
+    "ELEC_NLP",
+    "ELEC_FINMATH",
+    "ELEC_BIOSTAT",
+    "ELEC_ROBOTICS",
+    "ELEC_CORPFIN"
+  ],
+  "primary_model": "Ridge Regression (alpha=10.0)",
+  "frameworks": {
+    "python": "3.13.9",
+    "scikit_learn": "1.7.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "ELEC_ECON": {
+    "name": "Econometrics",
+    "residual_sd": 3.737,
+    "mae": 2.98,
+    "rmse": 3.74,
+    "r2": 0.835,
+    "coefficients": {
+      "Calculus": 3.408,
+      "Statistics": 3.411,
+      "Programming": 0.907,
+      "English": -0.167,
+      "Physics": -0.238,
+      "Economics": 2.182
+    },
+    "intercept": 74.25
+  },
+  "ELEC_DATAMIN": {
+    "name": "Data Mining & Machine Learning",
+    "residual_sd": 3.902,
+    "mae": 3.1,
+    "rmse": 3.9,
+    "r2": 0.841,
+    "coefficients": {
+      "Calculus": 1.496,
+      "Statistics": 3.53,
+      "Programming": 4.609,
+      "English": 0.007,
+      "Physics": 0.525,
+      "Economics": -0.111
+    },
+    "intercept": 74.2
+  },
+  "ELEC_OPER": {
+    "name": "Operations Research & Optimization",
+    "residual_sd": 3.856,
+    "mae": 3.05,
+    "rmse": 3.85,
+    "r2": 0.84,
+    "coefficients": {
+      "Calculus": 4.228,
+      "Statistics": 2.007,
+      "Programming": 2.846,
+      "English": -0.081,
+      "Physics": 0.986,
+      "Economics": 0.033
+    },
+    "intercept": 74.07
+  },
+  "ELEC_NLP": {
+    "name": "Natural Language Processing",
+    "residual_sd": 3.812,
+    "mae": 3.06,
+    "rmse": 3.81,
+    "r2": 0.798,
+    "coefficients": {
+      "Calculus": 0.937,
+      "Statistics": 1.412,
+      "Programming": 4.113,
+      "English": 3.67,
+      "Physics": -0.012,
+      "Economics": -0.097
+    },
+    "intercept": 74.2
+  },
+  "ELEC_FINMATH": {
+    "name": "Financial Mathematics",
+    "residual_sd": 3.819,
+    "mae": 3.04,
+    "rmse": 3.82,
+    "r2": 0.828,
+    "coefficients": {
+      "Calculus": 4.105,
+      "Statistics": 1.554,
+      "Programming": 1.096,
+      "English": -0.041,
+      "Physics": 0.306,
+      "Economics": 2.646
+    },
+    "intercept": 74.31
+  },
+  "ELEC_BIOSTAT": {
+    "name": "Biostatistics & Clinical Trials",
+    "residual_sd": 3.804,
+    "mae": 3.03,
+    "rmse": 3.8,
+    "r2": 0.817,
+    "coefficients": {
+      "Calculus": 1.96,
+      "Statistics": 4.585,
+      "Programming": 1.414,
+      "English": 1.746,
+      "Physics": 0.237,
+      "Economics": -0.069
+    },
+    "intercept": 74.13
+  },
+  "ELEC_ROBOTICS": {
+    "name": "Robotics & Autonomous Systems",
+    "residual_sd": 3.857,
+    "mae": 3.06,
+    "rmse": 3.86,
+    "r2": 0.844,
+    "coefficients": {
+      "Calculus": 2.03,
+      "Statistics": 0.659,
+      "Programming": 3.741,
+      "English": -0.053,
+      "Physics": 3.866,
+      "Economics": -0.157
+    },
+    "intercept": 74.06
+  },
+  "ELEC_CORPFIN": {
+    "name": "Corporate Finance & Strategy",
+    "residual_sd": 3.792,
+    "mae": 3.02,
+    "rmse": 3.79,
+    "r2": 0.805,
+    "coefficients": {
+      "Calculus": 1.097,
+      "Statistics": 1.876,
+      "Programming": -0.046,
+      "English": 2.377,
+      "Physics": 0.12,
+      "Economics": 4.008
+    },
+    "intercept": 74.17
+  }
+}

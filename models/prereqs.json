@@ -1,0 +1,32 @@
+{
+  "ELEC_ECON": {
+    "Calculus": 60.0,
+    "Statistics": 60.0
+  },
+  "ELEC_DATAMIN": {
+    "Programming": 65.0,
+    "Statistics": 60.0
+  },
+  "ELEC_OPER": {
+    "Calculus": 60.0,
+    "Programming": 50.0
+  },
+  "ELEC_NLP": {
+    "Programming": 60.0,
+    "English": 65.0
+  },
+  "ELEC_FINMATH": {
+    "Calculus": 65.0,
+    "Economics": 60.0
+  },
+  "ELEC_BIOSTAT": {
+    "Statistics": 65.0
+  },
+  "ELEC_ROBOTICS": {
+    "Physics": 65.0,
+    "Programming": 60.0
+  },
+  "ELEC_CORPFIN": {
+    "Economics": 60.0
+  }
+}

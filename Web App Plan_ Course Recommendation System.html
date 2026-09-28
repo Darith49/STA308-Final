@@ -1,0 +1,624 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}</style><style>:root{color-scheme:light dark;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}}:root[data-theme="dark"]{color-scheme:dark;--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}:root[data-theme="light"]{color-scheme:light}@media print{:root,:root[data-theme="dark"]{color-scheme:light;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}}body{background:var(--md-bg);color:var(--md-text);max-width:720px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:10px;font:14px/1.55 -apple-system,BlinkMacSystemFont,'SF Pro','Segoe UI',sans-serif;overflow-wrap:break-word}body>:first-child{margin-top:0}h1,h2,h3,h4,h5,h6{margin:6px 0 0;line-height:1.25;font-weight:600;text-wrap:balance}h1{font-size:1.35em}h2{font-size:1.15em;color:var(--md-muted)}h3,h4,h5,h6{font-size:1em}p,ul,ol,blockquote,table,pre,hr{margin:0}strong{font-weight:600}a{color:var(--md-link);text-decoration:none}a:hover{text-decoration:underline}ul,ol{display:flex;flex-direction:column;gap:6px;padding-left:22px}ul{list-style:disc}ol{list-style:decimal}:is(li,td,th)>*+:is(p,ul,ol,blockquote){margin-top:6px}blockquote{display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--md-rule);padding-left:10px;color:var(--md-muted)}:not(pre)>code{background:var(--md-fill);padding:1px 3px;border-radius:4px;font:.92em 'SF Mono',ui-monospace,Menlo,Consolas,monospace}a>code{background:none;color:inherit}pre{background:var(--md-fill);padding:10px 12px;border-radius:6px;overflow-x:auto;font:12px/1.5 'SF Mono',ui-monospace,Menlo,Consolas,monospace;margin-block:4px}pre code{background:none;padding:0;font:inherit}table{width:100%;border-collapse:separate;border-spacing:2px;font:inherit}th,td{padding:6px 8px;border-radius:3px;text-align:left;vertical-align:top}th{background:var(--md-fill-strong);font-weight:600}td{background:var(--md-fill)}:is(th,td) :not(pre)>code{background:transparent}hr{border:0;border-top:1px solid var(--md-rule-strong);margin-block:10px}img{max-width:100%;height:auto;border-radius:4px}</style>
+</head><body>
+<h1>Web App Plan: Course Recommendation System</h1>
+<p><strong>STA308 Final Project | Companion to the Project Plan | Stack: Python + Streamlit</strong></p>
+<blockquote>
+<p><strong>Assumptions:</strong> the model is frozen by end of Week 9, the app is built in Weeks 10-11, and one or two developers work on it. Streamlit is the default; a FastAPI variant is described in Section 4.4.</p>
+</blockquote>
+<hr>
+<h2>1. Purpose and Success Criteria</h2>
+<p><strong>Purpose:</strong> give a student (or advisor) an instant, explainable elective recommendation from their core grades, and show graders the evidence behind it.</p>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recommendation returned</td>
+<td>Under 2 seconds after submit</td>
+</tr>
+<tr>
+<td>Output per query</td>
+<td>Top-3 electives, predicted grade, interval, explanation</td>
+</tr>
+<tr>
+<td>Input errors handled</td>
+<td>100% of invalid inputs give a clear message, never a crash</td>
+</tr>
+<tr>
+<td>Evaluation visible</td>
+<td>Baseline vs model results viewable in-app</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Public URL plus local-run instructions plus backup demo video</td>
+</tr>
+<tr>
+<td>Reproducibility</td>
+<td>Fresh install runs from <code>requirements.txt</code> with one command</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>2. Users and Requirements</h2>
+<h3>2.1 Personas</h3>
+<ul>
+<li><strong>Student (primary):</strong> knows own grades, wants a quick suggestion and a reason to trust it.</li>
+<li><strong>Advisor (secondary):</strong> wants to see all electives ranked, flags for unmet prerequisites, and cluster profile.</li>
+<li><strong>Grader/lecturer:</strong> wants to see method, metrics, limitations, and that the app matches the report.</li>
+</ul>
+<h3>2.2 User Stories</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Story</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U1</td>
+<td>As a student, I enter my core grades and get my top-3 electives</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>U2</td>
+<td>I see why each elective was recommended</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>U3</td>
+<td>I see my strength profile as a chart</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>U4</td>
+<td>I can upload a CSV of grades instead of typing</td>
+<td>Should</td>
+</tr>
+<tr>
+<td>U5</td>
+<td>I see the uncertainty of each prediction</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>U6</td>
+<td>I see which electives I can't take yet (prerequisites)</td>
+<td>Should</td>
+</tr>
+<tr>
+<td>U7</td>
+<td>As an advisor, I see the full ranked list of electives</td>
+<td>Should</td>
+</tr>
+<tr>
+<td>U8</td>
+<td>As a grader, I see model comparison and limitations</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>U9</td>
+<td>I can download my results as PDF or CSV</td>
+<td>Could</td>
+</tr>
+<tr>
+<td>U10</td>
+<td>I can compare two students side by side</td>
+<td>Could</td>
+</tr>
+</tbody>
+</table>
+<h3>2.3 Functional Requirements</h3>
+<ul>
+<li><strong>FR1</strong> Accept grades for all core subjects (0-100), allowing some to be left blank.</li>
+<li><strong>FR2</strong> Validate inputs before calling the model.</li>
+<li><strong>FR3</strong> Scale inputs with the training scaler, project onto PCA, assign cluster.</li>
+<li><strong>FR4</strong> Predict grade for every eligible elective with a prediction interval.</li>
+<li><strong>FR5</strong> Rank by combined score (predicted grade plus similar-student success).</li>
+<li><strong>FR6</strong> Return explanation: top contributing core subjects per elective.</li>
+<li><strong>FR7</strong> Display charts: radar profile, ranked bar chart with intervals.</li>
+<li><strong>FR8</strong> Provide data exploration and model performance pages using precomputed results.</li>
+<li><strong>FR9</strong> Provide methodology, limitations, and privacy notice.</li>
+</ul>
+<h3>2.4 Non-Functional Requirements</h3>
+<ul>
+<li><strong>Performance:</strong> models load once (cached); predictions under 2 s.</li>
+<li><strong>Privacy:</strong> entered grades are never stored or logged; no login.</li>
+<li><strong>Usability:</strong> works on laptop and phone widths; labels in plain language; color-blind-safe palette.</li>
+<li><strong>Reliability:</strong> graceful error messages; app never shows a Python traceback.</li>
+<li><strong>Maintainability:</strong> logic separated from UI; type hints and docstrings.</li>
+<li><strong>Reproducibility:</strong> pinned dependencies, saved random seeds, model metadata file.</li>
+</ul>
+<hr>
+<h2>3. Architecture</h2>
+<pre><code>┌───────────────┐    ┌──────────────────┐    ┌────────────────────┐
+│ Streamlit UI  │ →  │ Validation layer │ →  │ recommend.py (core)│
+│ (pages,forms) │    │ schema + ranges  │    │ pure Python funcs  │
+└───────────────┘    └──────────────────┘    └─────────┬──────────┘
+        ↑                                              │ loads
+        │ charts/tables                       ┌────────▼─────────┐
+        └─────────────────────────────────────│ models/ artifacts│
+                                              │ scaler, PCA, KMeans,
+                                              │ regressors, metadata,
+                                              │ neighbor matrix, metrics
+                                              └──────────────────┘
+</code></pre>
+<p><strong>Rules:</strong></p>
+<ol>
+<li><code>src/recommend.py</code> has no Streamlit imports. It can be tested and reused anywhere.</li>
+<li>The app never trains. <code>src/train.py</code> produces artifacts offline.</li>
+<li>All numbers shown on Performance/Explore pages come from <code>models/metrics.json</code> and <code>models/eda_summary.json</code>, generated by the notebooks, so the app and report always match.</li>
+</ol>
+<h3>3.1 Artifact Contract (what <code>train.py</code> must save)</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scaler.joblib</code></td>
+<td>StandardScaler fit on training core grades</td>
+</tr>
+<tr>
+<td><code>pca.joblib</code></td>
+<td>Fitted PCA (or factor model)</td>
+</tr>
+<tr>
+<td><code>kmeans.joblib</code></td>
+<td>Cluster model and label names map</td>
+</tr>
+<tr>
+<td><code>elective_models/{elective_id}.joblib</code></td>
+<td>One regressor per elective</td>
+</tr>
+<tr>
+<td><code>neighbors.joblib</code></td>
+<td>Student-by-core matrix (anonymized, standardized) for similarity, plus elective grades matrix</td>
+</tr>
+<tr>
+<td><code>residual_stats.json</code></td>
+<td>Per-elective residual SD for prediction intervals</td>
+</tr>
+<tr>
+<td><code>metrics.json</code></td>
+<td>RMSE, MAE, R², Precision@3, NDCG@3, coverage for model and baselines</td>
+</tr>
+<tr>
+<td><code>metadata.json</code></td>
+<td>Library versions, training date, seed, subject list and order, data source label (real/synthetic)</td>
+</tr>
+<tr>
+<td><code>prereqs.json</code></td>
+<td>Elective to required core subject(s) and minimum grade</td>
+</tr>
+</tbody>
+</table>
+<p>Order of subjects in <code>metadata.json</code> is the single source of truth for input columns.</p>
+<h3>3.2 Core Function Signatures</h3>
+<pre><code class="language-python">def validate_grades(grades: dict[str, float | None]) -&gt; ValidationResult: ...
+def build_profile(grades: dict[str, float]) -&gt; Profile:   # z-scores, PCA scores, cluster
+def predict_electives(profile: Profile) -&gt; pd.DataFrame:  # elective, pred, lo, hi
+def similar_student_score(profile: Profile, k: int = 15) -&gt; pd.Series: ...
+def recommend(grades: dict, top_n: int = 3, w1: float = 0.7) -&gt; Recommendation:
+def explain(elective_id: str, grades: dict) -&gt; list[Contribution]:
+</code></pre>
+<p><code>Recommendation</code> contains: ranked table, cluster name, profile scores, blocked electives with reasons, warnings.</p>
+<h3>3.3 Handling Missing Core Grades</h3>
+<ul>
+<li>If 1-2 grades missing: impute using regression from the other cores (fit at training time) and show a warning banner.</li>
+<li>If more than 2 missing: refuse and explain that at least N grades are needed.</li>
+<li>Always list which values were imputed in the results.</li>
+</ul>
+<h3>3.4 Prediction Interval Method</h3>
+<p>Use <code>pred ± 1.96 × residual SD</code> from cross-validated residuals, clipped to 0-100. State clearly that this is an approximate 95% interval. (For random forest, use quantile across trees or conformal residuals.)</p>
+<h3>3.5 Explanation Method</h3>
+<ul>
+<li><strong>Linear/ridge:</strong> contribution_i = coefficient_i × z-score_i; show top 3 by absolute value.</li>
+<li><strong>Random forest:</strong> use permutation importance globally plus SHAP for local explanations if time allows.</li>
+<li><strong>Display in plain language:</strong> &quot;Strong Calculus grade (+4.2 points) and Statistics (+3.1) raise your predicted score in Econometrics.&quot;</li>
+</ul>
+<h3>4. Tech Stack</h3>
+<h3>4.1 Libraries</h3>
+<p><code>streamlit</code>, <code>pandas</code>, <code>numpy</code>, <code>scikit-learn</code>, <code>statsmodels</code>, <code>joblib</code>, <code>plotly</code> (interactive charts), <code>pydantic</code> (validation), <code>pytest</code>, <code>black</code>, <code>ruff</code>. Optional: <code>shap</code>, <code>reportlab</code> or <code>fpdf2</code> for PDF export.</p>
+<h3>4.2 Environment</h3>
+<p>Python 3.11, virtual environment, <code>requirements.txt</code> with pinned versions, <code>Makefile</code> or <code>run.sh</code> with <code>train</code>, <code>test</code>, <code>app</code> targets.</p>
+<h3>4.3 State Management</h3>
+<p>Use <code>st.session_state</code> for the last submitted grades and results so switching pages doesn't erase them. Use <code>@st.cache_resource</code> for model loading and <code>@st.cache_data</code> for static tables and charts.</p>
+<h3>4.4 Optional FastAPI Variant</h3>
+<p>Expose <code>POST /recommend</code> (JSON grades in, ranked electives out), <code>GET /metrics</code>, <code>GET /health</code>. Streamlit calls it via <code>requests</code>. Adds architectural depth but costs about a week; only do this if the model is frozen early.</p>
+<hr>
+<h2>5. Page-by-Page Specification</h2>
+<h3>5.1 Navigation</h3>
+<p>Sidebar: Home | Get Recommendations | Explore Data | Model Performance | Methodology and Ethics.</p>
+<h3>5.2 Home</h3>
+<ul>
+<li>Title, one-sentence purpose, 3-step &quot;how it works&quot; graphic.</li>
+<li>Buttons: &quot;Get my recommendations&quot;, &quot;See how it works&quot;.</li>
+<li>Data source badge (e.g., &quot;Trained on synthetic data, N students&quot;) and disclaimer.</li>
+</ul>
+<h3>5.3 Get Recommendations (main page)</h3>
+<p><strong>Wireframe</strong></p>
+<pre><code>┌ Sidebar ─┐ ┌──────────────── Main ───────────────────────────────┐
+│ Pages    │ │ Enter your grades                                   │
+│          │ │ [Calculus ___] [Statistics ___] [Programming ___]   │
+│          │ │ [English ___]  [Physics ___]    [Economics ___]     │
+│          │ │ ( ) Type grades  ( ) Upload CSV   [Use sample]      │
+│          │ │ [ Get recommendations ]                             │
+│          │ ├─────────────────────────────────────────────────────┤
+│          │ │ Your profile: &#34;Quantitative Thinker&#34; (Cluster 2)    │
+│          │ │ [Radar chart]           [Profile summary text]      │
+│          │ │ Top 3 electives                                     │
+│          │ │ #1 Econometrics  Pred 84 (77-91)  [Why?]            │
+│          │ │ #2 Data Mining   Pred 82 (74-90)  [Why?]            │
+│          │ │ #3 Operations    Pred 80 (72-88)  [Why?]            │
+│          │ │ [Bar chart with intervals]   [Download results]     │
+│          │ │ ▸ All electives (table)   ▸ Not yet eligible        │
+│          │ └─────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>Inputs</strong></p>
+<ul>
+<li>Number inputs with min 0, max 100, step 0.5, blank allowed, tooltips with subject descriptions.</li>
+<li>&quot;Use sample student&quot; button that fills three preset profiles (for demo and testing).</li>
+<li>CSV upload: columns must match subject names; show a template download; validate headers and types; first row used (or a selector for multi-student files).</li>
+</ul>
+<p><strong>Validation rules</strong></p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value outside 0-100</td>
+<td>&quot;Grades must be between 0 and 100.&quot;</td>
+</tr>
+<tr>
+<td>Non-numeric</td>
+<td>&quot;Please enter a number for {subject}.&quot;</td>
+</tr>
+<tr>
+<td>More than 2 blanks</td>
+<td>&quot;Please enter at least {n} grades so the estimate is reliable.&quot;</td>
+</tr>
+<tr>
+<td>CSV header mismatch</td>
+<td>Show expected vs found columns</td>
+</tr>
+<tr>
+<td>All grades identical</td>
+<td>Warning: &quot;Profile may be uninformative&quot;</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<ol>
+<li>Profile card: cluster name, short description, radar chart comparing student to cluster average and overall average.</li>
+<li>Top-3 cards: rank, elective name, predicted grade, interval, category, expandable &quot;Why?&quot; with contribution bars, and a similar-student note (&quot;Among 15 similar students, average grade was 81&quot;).</li>
+<li>Interval bar chart for all eligible electives.</li>
+<li>Expanders: full ranked table, blocked electives with reason (&quot;Requires Calculus ≥ 60&quot;), imputed values list.</li>
+<li>Buttons: download CSV (and PDF if built), &quot;Start over&quot;.</li>
+<li>Persistent disclaimer: &quot;Predictions are estimates from past grades, not guarantees. Consider your interests and consult an advisor.&quot;</li>
+</ol>
+<h3>5.4 Explore Data</h3>
+<p>Tabs: <strong>Distributions</strong> (histograms per subject, boxplots), <strong>Correlations</strong> (heatmap with hover), <strong>Profiles</strong> (scree plot, PCA loadings table, cluster sizes and mean-grade profiles), <strong>Electives</strong> (grade distribution per elective, enrolment counts). All read from precomputed files. Add a subject selector and category filters.</p>
+<h3>5.5 Model Performance</h3>
+<ul>
+<li>Comparison table: baseline mean, student-GPA baseline, linear, ridge/lasso, random forest (RMSE, MAE, R²).</li>
+<li>Recommendation metrics: Precision@3, Recall@3, NDCG@3, coverage vs popularity baseline.</li>
+<li>Charts: predicted vs actual scatter, residual plot, feature importance, metric bars with bootstrap CIs.</li>
+<li>Fairness/stability box: group error gaps, bootstrap overlap.</li>
+<li>Text summary: &quot;Best model reduces RMSE by X% versus baseline (p = ...).&quot;</li>
+</ul>
+<h3>5.6 Methodology and Ethics</h3>
+<p>Data source and size, pipeline diagram, methods summary, assumptions and diagnostics summary, limitations, ethics (privacy, bias, grades vs interest), model version and training date from <code>metadata.json</code>, links to report and repo.</p>
+<hr>
+<h2>6. UX and Design Guidelines</h2>
+<ul>
+<li><strong>Layout:</strong> wide mode, three-column input grid, results below inputs.</li>
+<li><strong>Palette:</strong> one primary color, one accent, neutral grays; use Okabe-Ito colors for categories.</li>
+<li><strong>Typography:</strong> default Streamlit font, clear headings, no walls of text; use expanders for detail.</li>
+<li><strong>Feedback:</strong> spinner during computation, success/warning/error banners with plain-language text.</li>
+<li><strong>Accessibility:</strong> contrast ratio 4.5:1, alt text or captions for charts, no meaning conveyed by color alone.</li>
+<li><strong>Microcopy:</strong> avoid jargon on the main page (&quot;strength profile&quot; not &quot;PCA scores&quot;); jargon lives in Methodology.</li>
+<li><strong>Trust:</strong> always show uncertainty, data source, and a disclaimer.</li>
+</ul>
+<hr>
+<h2>7. Testing Plan</h2>
+<h3>7.1 Unit Tests (pytest)</h3>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Expectation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>validate_grades</code> with valid input</td>
+<td>passes</td>
+</tr>
+<tr>
+<td>Out-of-range, non-numeric, too many blanks</td>
+<td>correct error messages</td>
+</tr>
+<tr>
+<td><code>build_profile</code> with training-mean grades</td>
+<td>z-scores near 0</td>
+</tr>
+<tr>
+<td><code>recommend</code> returns exactly top_n, sorted descending</td>
+<td>true</td>
+</tr>
+<tr>
+<td>Intervals satisfy lo ≤ pred ≤ hi and within 0-100</td>
+<td>true</td>
+</tr>
+<tr>
+<td>Prerequisite filter blocks ineligible electives</td>
+<td>true</td>
+</tr>
+<tr>
+<td>Determinism: same input gives same output</td>
+<td>true</td>
+</tr>
+<tr>
+<td>Monotonicity: raising a strongly weighted grade never lowers that elective's prediction (linear model)</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<h3>7.2 Integration and Regression</h3>
+<ul>
+<li>End-to-end test: sample CSV in, recommendation table out.</li>
+<li>Golden-file test: 5 fixed student profiles must reproduce saved outputs; if you retrain, update the golden file deliberately.</li>
+<li>Artifact test: metadata subject order matches the input form.</li>
+</ul>
+<h3>7.3 Manual and User Testing</h3>
+<ul>
+<li>Test on Chrome and Firefox, laptop and phone width.</li>
+<li><strong>User test:</strong> 5 classmates each complete 3 tasks (get recommendation, find why #1 was chosen, find model accuracy). Record time, errors, and a 1-5 clarity rating, plus one open comment. Summarize for the report (average time, common confusions, changes made).</li>
+<li>Edge cases: all zeros, all 100s, one blank, three blanks, decimals, huge CSV, wrong headers, rapid repeated clicks.</li>
+</ul>
+<h3>7.4 Acceptance Checklist</h3>
+<ul>
+<li><input disabled="" type="checkbox"> All Must stories work end to end</li>
+<li><input disabled="" type="checkbox"> No traceback visible under any tested input</li>
+<li><input disabled="" type="checkbox"> Numbers in app match report tables exactly</li>
+<li><input disabled="" type="checkbox"> Fresh clone runs following README only</li>
+<li><input disabled="" type="checkbox"> Deployed URL works from another device</li>
+</ul>
+<hr>
+<h2>8. Deployment and Operations</h2>
+<ol>
+<li><strong>Prepare:</strong> <code>requirements.txt</code>, <code>runtime.txt</code> (Python version), <code>.streamlit/config.toml</code> (theme, wide layout), small artifacts (keep under repository size limits).</li>
+<li><strong>Deploy:</strong> Streamlit Community Cloud from GitHub (main branch, <code>app/app.py</code>). Alternative: Hugging Face Spaces.</li>
+<li><strong>Never deploy raw student data.</strong> Only trained artifacts and aggregate statistics.</li>
+<li><strong>Backup plan:</strong> record a 2-3 minute demo video; keep a local copy running on your laptop; keep screenshots in the slides.</li>
+<li><strong>Release tags:</strong> tag <code>v1.0-submission</code> in Git at final submission so the graded version is fixed.</li>
+<li><strong>Monitoring:</strong> none needed beyond a manual check the day before presenting; wake the app (cloud apps sleep) 10 minutes before the demo.</li>
+</ol>
+<hr>
+<h2>9. Security and Privacy</h2>
+<ul>
+<li>No database, no logging of grades, no cookies beyond Streamlit defaults.</li>
+<li>Validate uploads: file size limit, CSV only, ignore extra columns, never <code>eval</code> or execute file content.</li>
+<li>Pin dependencies and avoid unmaintained packages.</li>
+<li>State on the About page: &quot;Your grades are processed in memory and not stored.&quot;</li>
+<li>Keep secrets (if any) in Streamlit secrets, never in the repo.</li>
+</ul>
+<hr>
+<h2>10. Detailed Schedule (Weeks 9-12)</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Task</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Wk 9 (model freeze)</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mon-Tue</td>
+<td>Finalize recommender logic, weights, intervals</td>
+<td><code>recommend.py</code> v1</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>Write <code>train.py</code>, export all artifacts and metrics JSON</td>
+<td><code>models/</code> folder</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>Unit tests for core functions</td>
+<td>Tests passing</td>
+</tr>
+<tr>
+<td>Fri</td>
+<td><strong>Freeze model</strong>, tag <code>model-v1</code>, write artifact docs</td>
+<td>Freeze checkpoint</td>
+</tr>
+<tr>
+<td><strong>Wk 10 (build)</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mon</td>
+<td>App skeleton, navigation, theme, model loader with caching</td>
+<td>Runnable shell</td>
+</tr>
+<tr>
+<td>Tue</td>
+<td>Input form, validation, sample profiles</td>
+<td>Working form</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>Results view: profile card, radar chart, top-3 cards</td>
+<td>Recommendation page v1</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>Explanations, intervals, blocked electives, missing-grade handling</td>
+<td>Recommendation page v2</td>
+</tr>
+<tr>
+<td>Fri</td>
+<td>CSV upload, download results, error-handling pass</td>
+<td>Feature-complete main page</td>
+</tr>
+<tr>
+<td><strong>Wk 11 (finish)</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mon</td>
+<td>Model Performance page</td>
+<td>Page complete</td>
+</tr>
+<tr>
+<td>Tue</td>
+<td>Explore Data page</td>
+<td>Page complete</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>Methodology page, polish, accessibility check</td>
+<td>UI freeze</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>Integration tests, user testing with 5 classmates</td>
+<td>Feedback sheet</td>
+</tr>
+<tr>
+<td>Fri</td>
+<td>Fix issues, deploy, verify on second device</td>
+<td>Live URL</td>
+</tr>
+<tr>
+<td><strong>Wk 12 (submission)</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Mon-Tue</td>
+<td>Write System Design and Implementation section, add screenshots</td>
+<td>Report section</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>Record demo video, finalize slides</td>
+<td>Backup assets</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>Final full run from clean clone, tag <code>v1.0-submission</code></td>
+<td>Release</td>
+</tr>
+<tr>
+<td>Fri</td>
+<td>Rehearse presentation twice, submit</td>
+<td>Done</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cut order if behind:</strong> Explore Data page, PDF export, compare-two-students, SHAP, FastAPI variant. Never cut: validation, uncertainty display, Performance page, testing.</p>
+<hr>
+<h2>11. Risks (App-Specific)</h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App time squeezes analysis</td>
+<td>High</td>
+<td>High</td>
+<td>Freeze model Week 9; timebox app to 2 weeks</td>
+</tr>
+<tr>
+<td>Artifact/version mismatch on cloud</td>
+<td>Medium</td>
+<td>High</td>
+<td>Pin versions, save <code>metadata.json</code>, test deploy in Week 10</td>
+</tr>
+<tr>
+<td>App and report disagree on numbers</td>
+<td>Medium</td>
+<td>High</td>
+<td>Both read from <code>metrics.json</code>; generate report tables from same file</td>
+</tr>
+<tr>
+<td>Cloud app sleeps or crashes at demo</td>
+<td>Medium</td>
+<td>High</td>
+<td>Wake early, local fallback, demo video</td>
+</tr>
+<tr>
+<td>Confusing UI</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>User test in Week 11; plain-language microcopy</td>
+</tr>
+<tr>
+<td>Slow load from large artifacts</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Compress joblib files, cache, keep random forests small</td>
+</tr>
+<tr>
+<td>Overclaiming accuracy</td>
+<td>Medium</td>
+<td>High</td>
+<td>Always show intervals and limitations; wording reviewed against metrics</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>12. Documentation and Report Integration</h2>
+<p><strong>README must include:</strong> purpose, screenshot, install steps, <code>make train / test / app</code>, folder guide, data source note, live URL, limitations.</p>
+<p><strong>Report section &quot;System Design and Implementation&quot; (2-3 pages):</strong></p>
+<ol>
+<li>Requirements summary (Section 2 tables)</li>
+<li>Architecture diagram (Section 3)</li>
+<li>Key design decisions and why (separation of logic, precomputed metrics, uncertainty display)</li>
+<li>Screenshots of each page with captions</li>
+<li>Testing summary and user test results (table of tasks, time, errors, ratings)</li>
+<li>Limitations and future work (real-time data, advisor login, interest survey, mobile app)</li>
+</ol>
+<p><strong>Demo script (3 minutes):</strong></p>
+<ol>
+<li>Open on Home (10 s)</li>
+<li>Load sample &quot;Quantitative Thinker&quot; and submit (20 s)</li>
+<li>Explain profile and top pick, expand &quot;Why?&quot; (40 s)</li>
+<li>Show blocked elective and interval (20 s)</li>
+<li>Switch to Model Performance: baseline vs model, one sentence on significance (40 s)</li>
+<li>Show Methodology limitations (20 s)</li>
+<li>Invite one audience member's grades if time allows (30 s)</li>
+</ol>
+<hr>
+<h2>13. Definition of Done</h2>
+<p>The app is done when every Must story passes acceptance, all tests pass on a clean clone, the deployed URL works from another device, numbers match the report, the demo video exists, and <code>v1.0-submission</code> is tagged.</p>
+
+</body></html>

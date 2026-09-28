@@ -1,0 +1,930 @@
+{
+  "n_students": 1200,
+  "core_subjects": [
+    "Calculus",
+    "Statistics",
+    "Programming",
+    "English",
+    "Physics",
+    "Economics"
+  ],
+  "elective_ids": [
+    "ELEC_ECON",
+    "ELEC_DATAMIN",
+    "ELEC_OPER",
+    "ELEC_NLP",
+    "ELEC_FINMATH",
+    "ELEC_BIOSTAT",
+    "ELEC_ROBOTICS",
+    "ELEC_CORPFIN"
+  ],
+  "electives_meta": {
+    "ELEC_ECON": {
+      "name": "Econometrics",
+      "category": "Quantitative Economics",
+      "description": "Statistical modeling of economic data and empirical analysis.",
+      "weights": {
+        "Calculus": 0.35,
+        "Statistics": 0.4,
+        "Economics": 0.25,
+        "English": 0.0,
+        "Physics": 0.0,
+        "Programming": 0.1
+      }
+    },
+    "ELEC_DATAMIN": {
+      "name": "Data Mining & Machine Learning",
+      "category": "Computer Science & Analytics",
+      "description": "Algorithms for discovering patterns in large-scale datasets.",
+      "weights": {
+        "Programming": 0.45,
+        "Statistics": 0.35,
+        "Calculus": 0.15,
+        "Physics": 0.05,
+        "English": 0.0,
+        "Economics": 0.0
+      }
+    },
+    "ELEC_OPER": {
+      "name": "Operations Research & Optimization",
+      "category": "Applied Mathematics",
+      "description": "Linear programming, optimization, and decision modeling.",
+      "weights": {
+        "Calculus": 0.4,
+        "Programming": 0.3,
+        "Statistics": 0.2,
+        "Physics": 0.1,
+        "English": 0.0,
+        "Economics": 0.0
+      }
+    },
+    "ELEC_NLP": {
+      "name": "Natural Language Processing",
+      "category": "Artificial Intelligence & Linguistics",
+      "description": "Computational linguistics, text representation, and language models.",
+      "weights": {
+        "Programming": 0.4,
+        "English": 0.35,
+        "Statistics": 0.15,
+        "Calculus": 0.1,
+        "Physics": 0.0,
+        "Economics": 0.0
+      }
+    },
+    "ELEC_FINMATH": {
+      "name": "Financial Mathematics",
+      "category": "Quantitative Finance",
+      "description": "Stochastic calculus, derivative pricing, and portfolio theory.",
+      "weights": {
+        "Calculus": 0.4,
+        "Economics": 0.3,
+        "Statistics": 0.2,
+        "Programming": 0.1,
+        "Physics": 0.0,
+        "English": 0.0
+      }
+    },
+    "ELEC_BIOSTAT": {
+      "name": "Biostatistics & Clinical Trials",
+      "category": "Health & Life Sciences",
+      "description": "Survival analysis, clinical trial design, and epidemiological stats.",
+      "weights": {
+        "Statistics": 0.5,
+        "Calculus": 0.2,
+        "English": 0.15,
+        "Programming": 0.15,
+        "Physics": 0.0,
+        "Economics": 0.0
+      }
+    },
+    "ELEC_ROBOTICS": {
+      "name": "Robotics & Autonomous Systems",
+      "category": "Engineering & Robotics",
+      "description": "Kinematics, sensor fusion, and real-time embedded control.",
+      "weights": {
+        "Physics": 0.4,
+        "Programming": 0.35,
+        "Calculus": 0.2,
+        "Statistics": 0.05,
+        "English": 0.0,
+        "Economics": 0.0
+      }
+    },
+    "ELEC_CORPFIN": {
+      "name": "Corporate Finance & Strategy",
+      "category": "Business & Management",
+      "description": "Capital budgeting, corporate valuation, and financial governance.",
+      "weights": {
+        "Economics": 0.45,
+        "English": 0.25,
+        "Statistics": 0.2,
+        "Calculus": 0.1,
+        "Programming": 0.0,
+        "Physics": 0.0
+      }
+    }
+  },
+  "distributions": {
+    "Calculus": {
+      "mean": 74.25,
+      "std": 10.14,
+      "min": 40.0,
+      "p25": 67.3,
+      "median": 74.1,
+      "p75": 81.1,
+      "max": 99.0,
+      "histogram": {
+        "counts": [
+          2,
+          19,
+          35,
+          125,
+          193,
+          289,
+          247,
+          174,
+          70,
+          46
+        ],
+        "bin_edges": [
+          40.0,
+          45.9,
+          51.8,
+          57.7,
+          63.6,
+          69.5,
+          75.4,
+          81.3,
+          87.2,
+          93.1,
+          99.0
+        ]
+      }
+    },
+    "Statistics": {
+      "mean": 74.09,
+      "std": 9.72,
+      "min": 40.9,
+      "p25": 67.6,
+      "median": 74.2,
+      "p75": 80.7,
+      "max": 99.0,
+      "histogram": {
+        "counts": [
+          3,
+          17,
+          40,
+          123,
+          221,
+          273,
+          250,
+          169,
+          76,
+          28
+        ],
+        "bin_edges": [
+          40.9,
+          46.7,
+          52.5,
+          58.3,
+          64.1,
+          70.0,
+          75.8,
+          81.6,
+          87.4,
+          93.2,
+          99.0
+        ]
+      }
+    },
+    "Programming": {
+      "mean": 73.9,
+      "std": 10.42,
+      "min": 38.0,
+      "p25": 66.8,
+      "median": 74.0,
+      "p75": 81.3,
+      "max": 99.0,
+      "histogram": {
+        "counts": [
+          7,
+          9,
+          38,
+          105,
+          196,
+          271,
+          247,
+          194,
+          98,
+          35
+        ],
+        "bin_edges": [
+          38.0,
+          44.1,
+          50.2,
+          56.3,
+          62.4,
+          68.5,
+          74.6,
+          80.7,
+          86.8,
+          92.9,
+          99.0
+        ]
+      }
+    },
+    "English": {
+      "mean": 74.3,
+      "std": 10.3,
+      "min": 45.0,
+      "p25": 66.78,
+      "median": 74.5,
+      "p75": 81.1,
+      "max": 99.0,
+      "histogram": {
+        "counts": [
+          9,
+          27,
+          94,
+          163,
+          181,
+          279,
+          203,
+          128,
+          79,
+          37
+        ],
+        "bin_edges": [
+          45.0,
+          50.4,
+          55.8,
+          61.2,
+          66.6,
+          72.0,
+          77.4,
+          82.8,
+          88.2,
+          93.6,
+          99.0
+        ]
+      }
+    },
+    "Physics": {
+      "mean": 74.05,
+      "std": 9.93,
+      "min": 43.2,
+      "p25": 67.1,
+      "median": 73.85,
+      "p75": 80.9,
+      "max": 99.0,
+      "histogram": {
+        "counts": [
+          5,
+          24,
+          66,
+          141,
+          233,
+          252,
+          233,
+          150,
+          60,
+          36
+        ],
+        "bin_edges": [
+          43.2,
+          48.8,
+          54.4,
+          59.9,
+          65.5,
+          71.1,
+          76.7,
+          82.3,
+          87.8,
+          93.4,
+          99.0
+        ]
+      }
+    },
+    "Economics": {
+      "mean": 74.22,
+      "std": 8.93,
+      "min": 45.5,
+      "p25": 68.3,
+      "median": 74.4,
+      "p75": 80.4,
+      "max": 99.0,
+      "histogram": {
+        "counts": [
+          10,
+          13,
+          69,
+          151,
+          255,
+          275,
+          233,
+          122,
+          58,
+          14
+        ],
+        "bin_edges": [
+          45.5,
+          50.9,
+          56.2,
+          61.5,
+          66.9,
+          72.2,
+          77.6,
+          82.9,
+          88.3,
+          93.7,
+          99.0
+        ]
+      }
+    },
+    "ELEC_ECON": {
+      "mean": 74.25,
+      "std": 9.19,
+      "min": 42.0,
+      "p25": 68.2,
+      "median": 74.3,
+      "p75": 80.5,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          3,
+          14,
+          48,
+          131,
+          233,
+          300,
+          246,
+          157,
+          52,
+          16
+        ],
+        "bin_edges": [
+          42.0,
+          47.8,
+          53.6,
+          59.4,
+          65.2,
+          71.0,
+          76.8,
+          82.6,
+          88.4,
+          94.2,
+          100.0
+        ]
+      }
+    },
+    "ELEC_DATAMIN": {
+      "mean": 74.2,
+      "std": 9.79,
+      "min": 42.0,
+      "p25": 67.9,
+      "median": 74.55,
+      "p75": 80.9,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          10,
+          16,
+          57,
+          136,
+          218,
+          281,
+          239,
+          160,
+          65,
+          18
+        ],
+        "bin_edges": [
+          42.0,
+          47.8,
+          53.6,
+          59.4,
+          65.2,
+          71.0,
+          76.8,
+          82.6,
+          88.4,
+          94.2,
+          100.0
+        ]
+      }
+    },
+    "ELEC_OPER": {
+      "mean": 74.07,
+      "std": 9.64,
+      "min": 42.0,
+      "p25": 67.6,
+      "median": 74.4,
+      "p75": 80.43,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          6,
+          11,
+          70,
+          130,
+          217,
+          287,
+          258,
+          136,
+          59,
+          26
+        ],
+        "bin_edges": [
+          42.0,
+          47.8,
+          53.6,
+          59.4,
+          65.2,
+          71.0,
+          76.8,
+          82.6,
+          88.4,
+          94.2,
+          100.0
+        ]
+      }
+    },
+    "ELEC_NLP": {
+      "mean": 74.2,
+      "std": 8.48,
+      "min": 43.3,
+      "p25": 68.6,
+      "median": 74.1,
+      "p75": 79.9,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          4,
+          11,
+          54,
+          124,
+          254,
+          339,
+          228,
+          131,
+          47,
+          8
+        ],
+        "bin_edges": [
+          43.3,
+          49.0,
+          54.6,
+          60.3,
+          66.0,
+          71.7,
+          77.3,
+          83.0,
+          88.7,
+          94.3,
+          100.0
+        ]
+      }
+    },
+    "ELEC_FINMATH": {
+      "mean": 74.31,
+      "std": 9.21,
+      "min": 42.0,
+      "p25": 68.07,
+      "median": 74.7,
+      "p75": 80.5,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          4,
+          10,
+          43,
+          131,
+          239,
+          291,
+          261,
+          146,
+          58,
+          17
+        ],
+        "bin_edges": [
+          42.0,
+          47.8,
+          53.6,
+          59.4,
+          65.2,
+          71.0,
+          76.8,
+          82.6,
+          88.4,
+          94.2,
+          100.0
+        ]
+      }
+    },
+    "ELEC_BIOSTAT": {
+      "mean": 74.13,
+      "std": 8.9,
+      "min": 45.7,
+      "p25": 68.38,
+      "median": 73.95,
+      "p75": 80.0,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          8,
+          28,
+          62,
+          164,
+          276,
+          290,
+          202,
+          113,
+          44,
+          13
+        ],
+        "bin_edges": [
+          45.7,
+          51.1,
+          56.6,
+          62.0,
+          67.4,
+          72.8,
+          78.3,
+          83.7,
+          89.1,
+          94.6,
+          100.0
+        ]
+      }
+    },
+    "ELEC_ROBOTICS": {
+      "mean": 74.06,
+      "std": 9.76,
+      "min": 42.9,
+      "p25": 67.8,
+      "median": 74.1,
+      "p75": 80.7,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          8,
+          18,
+          62,
+          145,
+          244,
+          266,
+          231,
+          149,
+          49,
+          28
+        ],
+        "bin_edges": [
+          42.9,
+          48.6,
+          54.3,
+          60.0,
+          65.7,
+          71.5,
+          77.2,
+          82.9,
+          88.6,
+          94.3,
+          100.0
+        ]
+      }
+    },
+    "ELEC_CORPFIN": {
+      "mean": 74.17,
+      "std": 8.6,
+      "min": 46.4,
+      "p25": 68.38,
+      "median": 74.25,
+      "p75": 80.0,
+      "max": 100.0,
+      "histogram": {
+        "counts": [
+          5,
+          29,
+          65,
+          181,
+          256,
+          301,
+          216,
+          97,
+          40,
+          10
+        ],
+        "bin_edges": [
+          46.4,
+          51.8,
+          57.1,
+          62.5,
+          67.8,
+          73.2,
+          78.6,
+          83.9,
+          89.3,
+          94.6,
+          100.0
+        ]
+      }
+    }
+  },
+  "correlations": {
+    "Calculus": {
+      "Calculus": 1.0,
+      "Statistics": 0.756,
+      "Programming": 0.539,
+      "English": 0.231,
+      "Physics": 0.752,
+      "Economics": 0.657,
+      "ELEC_ECON": 0.84,
+      "ELEC_DATAMIN": 0.714,
+      "ELEC_OPER": 0.836,
+      "ELEC_NLP": 0.59,
+      "ELEC_FINMATH": 0.854,
+      "ELEC_BIOSTAT": 0.758,
+      "ELEC_ROBOTICS": 0.754,
+      "ELEC_CORPFIN": 0.672
+    },
+    "Statistics": {
+      "Calculus": 0.756,
+      "Statistics": 1.0,
+      "Programming": 0.691,
+      "English": 0.247,
+      "Physics": 0.773,
+      "Economics": 0.61,
+      "ELEC_ECON": 0.843,
+      "ELEC_DATAMIN": 0.839,
+      "ELEC_OPER": 0.825,
+      "ELEC_NLP": 0.685,
+      "ELEC_FINMATH": 0.79,
+      "ELEC_BIOSTAT": 0.861,
+      "ELEC_ROBOTICS": 0.785,
+      "ELEC_CORPFIN": 0.677
+    },
+    "Programming": {
+      "Calculus": 0.539,
+      "Statistics": 0.691,
+      "Programming": 1.0,
+      "English": 0.218,
+      "Physics": 0.659,
+      "Economics": 0.418,
+      "ELEC_ECON": 0.634,
+      "ELEC_DATAMIN": 0.837,
+      "ELEC_OPER": 0.745,
+      "ELEC_NLP": 0.752,
+      "ELEC_FINMATH": 0.618,
+      "ELEC_BIOSTAT": 0.692,
+      "ELEC_ROBOTICS": 0.799,
+      "ELEC_CORPFIN": 0.479
+    },
+    "English": {
+      "Calculus": 0.231,
+      "Statistics": 0.247,
+      "Programming": 0.218,
+      "English": 1.0,
+      "Physics": 0.237,
+      "Economics": 0.547,
+      "ELEC_ECON": 0.304,
+      "ELEC_DATAMIN": 0.234,
+      "ELEC_OPER": 0.235,
+      "ELEC_NLP": 0.602,
+      "ELEC_FINMATH": 0.331,
+      "ELEC_BIOSTAT": 0.413,
+      "ELEC_ROBOTICS": 0.228,
+      "ELEC_CORPFIN": 0.62
+    },
+    "Physics": {
+      "Calculus": 0.752,
+      "Statistics": 0.773,
+      "Programming": 0.659,
+      "English": 0.237,
+      "Physics": 1.0,
+      "Economics": 0.605,
+      "ELEC_ECON": 0.744,
+      "ELEC_DATAMIN": 0.751,
+      "ELEC_OPER": 0.789,
+      "ELEC_NLP": 0.626,
+      "ELEC_FINMATH": 0.751,
+      "ELEC_BIOSTAT": 0.737,
+      "ELEC_ROBOTICS": 0.85,
+      "ELEC_CORPFIN": 0.623
+    },
+    "Economics": {
+      "Calculus": 0.657,
+      "Statistics": 0.61,
+      "Programming": 0.418,
+      "English": 0.547,
+      "Physics": 0.605,
+      "Economics": 1.0,
+      "ELEC_ECON": 0.725,
+      "ELEC_DATAMIN": 0.539,
+      "ELEC_OPER": 0.599,
+      "ELEC_NLP": 0.601,
+      "ELEC_FINMATH": 0.753,
+      "ELEC_BIOSTAT": 0.641,
+      "ELEC_ROBOTICS": 0.559,
+      "ELEC_CORPFIN": 0.845
+    },
+    "ELEC_ECON": {
+      "Calculus": 0.84,
+      "Statistics": 0.843,
+      "Programming": 0.634,
+      "English": 0.304,
+      "Physics": 0.744,
+      "Economics": 0.725,
+      "ELEC_ECON": 1.0,
+      "ELEC_DATAMIN": 0.769,
+      "ELEC_OPER": 0.812,
+      "ELEC_NLP": 0.668,
+      "ELEC_FINMATH": 0.829,
+      "ELEC_BIOSTAT": 0.807,
+      "ELEC_ROBOTICS": 0.759,
+      "ELEC_CORPFIN": 0.726
+    },
+    "ELEC_DATAMIN": {
+      "Calculus": 0.714,
+      "Statistics": 0.839,
+      "Programming": 0.837,
+      "English": 0.234,
+      "Physics": 0.751,
+      "Economics": 0.539,
+      "ELEC_ECON": 0.769,
+      "ELEC_DATAMIN": 1.0,
+      "ELEC_OPER": 0.821,
+      "ELEC_NLP": 0.724,
+      "ELEC_FINMATH": 0.736,
+      "ELEC_BIOSTAT": 0.782,
+      "ELEC_ROBOTICS": 0.819,
+      "ELEC_CORPFIN": 0.599
+    },
+    "ELEC_OPER": {
+      "Calculus": 0.836,
+      "Statistics": 0.825,
+      "Programming": 0.745,
+      "English": 0.235,
+      "Physics": 0.789,
+      "Economics": 0.599,
+      "ELEC_ECON": 0.812,
+      "ELEC_DATAMIN": 0.821,
+      "ELEC_OPER": 1.0,
+      "ELEC_NLP": 0.691,
+      "ELEC_FINMATH": 0.798,
+      "ELEC_BIOSTAT": 0.794,
+      "ELEC_ROBOTICS": 0.818,
+      "ELEC_CORPFIN": 0.647
+    },
+    "ELEC_NLP": {
+      "Calculus": 0.59,
+      "Statistics": 0.685,
+      "Programming": 0.752,
+      "English": 0.602,
+      "Physics": 0.626,
+      "Economics": 0.601,
+      "ELEC_ECON": 0.668,
+      "ELEC_DATAMIN": 0.724,
+      "ELEC_OPER": 0.691,
+      "ELEC_NLP": 1.0,
+      "ELEC_FINMATH": 0.65,
+      "ELEC_BIOSTAT": 0.737,
+      "ELEC_ROBOTICS": 0.7,
+      "ELEC_CORPFIN": 0.688
+    },
+    "ELEC_FINMATH": {
+      "Calculus": 0.854,
+      "Statistics": 0.79,
+      "Programming": 0.618,
+      "English": 0.331,
+      "Physics": 0.751,
+      "Economics": 0.753,
+      "ELEC_ECON": 0.829,
+      "ELEC_DATAMIN": 0.736,
+      "ELEC_OPER": 0.798,
+      "ELEC_NLP": 0.65,
+      "ELEC_FINMATH": 1.0,
+      "ELEC_BIOSTAT": 0.772,
+      "ELEC_ROBOTICS": 0.75,
+      "ELEC_CORPFIN": 0.735
+    },
+    "ELEC_BIOSTAT": {
+      "Calculus": 0.758,
+      "Statistics": 0.861,
+      "Programming": 0.692,
+      "English": 0.413,
+      "Physics": 0.737,
+      "Economics": 0.641,
+      "ELEC_ECON": 0.807,
+      "ELEC_DATAMIN": 0.782,
+      "ELEC_OPER": 0.794,
+      "ELEC_NLP": 0.737,
+      "ELEC_FINMATH": 0.772,
+      "ELEC_BIOSTAT": 1.0,
+      "ELEC_ROBOTICS": 0.756,
+      "ELEC_CORPFIN": 0.714
+    },
+    "ELEC_ROBOTICS": {
+      "Calculus": 0.754,
+      "Statistics": 0.785,
+      "Programming": 0.799,
+      "English": 0.228,
+      "Physics": 0.85,
+      "Economics": 0.559,
+      "ELEC_ECON": 0.759,
+      "ELEC_DATAMIN": 0.819,
+      "ELEC_OPER": 0.818,
+      "ELEC_NLP": 0.7,
+      "ELEC_FINMATH": 0.75,
+      "ELEC_BIOSTAT": 0.756,
+      "ELEC_ROBOTICS": 1.0,
+      "ELEC_CORPFIN": 0.599
+    },
+    "ELEC_CORPFIN": {
+      "Calculus": 0.672,
+      "Statistics": 0.677,
+      "Programming": 0.479,
+      "English": 0.62,
+      "Physics": 0.623,
+      "Economics": 0.845,
+      "ELEC_ECON": 0.726,
+      "ELEC_DATAMIN": 0.599,
+      "ELEC_OPER": 0.647,
+      "ELEC_NLP": 0.688,
+      "ELEC_FINMATH": 0.735,
+      "ELEC_BIOSTAT": 0.714,
+      "ELEC_ROBOTICS": 0.599,
+      "ELEC_CORPFIN": 1.0
+    }
+  },
+  "pca_variance_ratio": [
+    0.6259,
+    0.1709,
+    0.0889
+  ],
+  "pca_loadings": {
+    "PC1": {
+      "Calculus": 0.446,
+      "Statistics": 0.461,
+      "Programming": 0.393,
+      "English": 0.231,
+      "Physics": 0.456,
+      "Economics": 0.414
+    },
+    "PC2": {
+      "Calculus": -0.139,
+      "Statistics": -0.2,
+      "Programming": -0.261,
+      "English": 0.83,
+      "Physics": -0.202,
+      "Economics": 0.379
+    },
+    "PC3": {
+      "Calculus": -0.446,
+      "Statistics": 0.018,
+      "Programming": 0.75,
+      "English": 0.318,
+      "Physics": -0.059,
+      "Economics": -0.364
+    }
+  },
+  "cluster_counts": {
+    "Quantitative Specialist": 333,
+    "Balanced Achiever": 239,
+    "Computational & Tech Focus": 298,
+    "Socio-Economic & Applied": 330
+  },
+  "cluster_means": {
+    "Quantitative Specialist": {
+      "Calculus": 63.65,
+      "Statistics": 63.31,
+      "Programming": 64.08,
+      "English": 69.89,
+      "Physics": 63.24,
+      "Economics": 66.11
+    },
+    "Balanced Achiever": {
+      "Calculus": 86.78,
+      "Statistics": 86.64,
+      "Programming": 84.67,
+      "English": 80.01,
+      "Physics": 86.33,
+      "Economics": 83.74
+    },
+    "Computational & Tech Focus": {
+      "Calculus": 75.24,
+      "Statistics": 75.75,
+      "Programming": 76.96,
+      "English": 66.13,
+      "Physics": 76.24,
+      "Economics": 70.52
+    },
+    "Socio-Economic & Applied": {
+      "Calculus": 74.97,
+      "Statistics": 74.36,
+      "Programming": 73.25,
+      "English": 82.0,
+      "Physics": 74.09,
+      "Economics": 78.83
+    }
+  }
+}

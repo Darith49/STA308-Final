@@ -1,0 +1,26 @@
+{
+  "Quantitative Thinker": {
+    "Calculus": 92.0,
+    "Statistics": 94.0,
+    "Programming": 85.0,
+    "English": 72.0,
+    "Physics": 89.0,
+    "Economics": 80.0
+  },
+  "Applied Tech & Computational": {
+    "Calculus": 78.0,
+    "Statistics": 82.0,
+    "Programming": 96.0,
+    "English": 75.0,
+    "Physics": 82.0,
+    "Economics": 70.0
+  },
+  "Balanced Socio-Economic Scholar": {
+    "Calculus": 72.0,
+    "Statistics": 79.0,
+    "Programming": 68.0,
+    "English": 90.0,
+    "Physics": 65.0,
+    "Economics": 93.0
+  }
+}
