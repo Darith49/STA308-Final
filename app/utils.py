@@ -28,6 +28,7 @@ CLAUDE = {
     "ink": "#141413",
     "body": "#2c2c29",
     "body_muted": "#5e5c56",
+    "muted": "#5e5c56",
     "muted_soft": "#8e8b82",
     "hairline": "#e6dfd8",
     "hairline_soft": "#f0ebe4",
