@@ -28,7 +28,6 @@ from app.utils import (
 )
 from src.recommend import CORE_SUBJECTS, recommend, validate_grades
 
-
 def render_recommend():
     """Render the optimized professional recommendation interface."""
     inject_custom_css()
