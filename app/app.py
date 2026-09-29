@@ -117,22 +117,16 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-# Page Router with animated wrapper container for smooth transitions
+# Page Router
 current = st.session_state.current_page
 
-page_container = st.container()
-with page_container:
-    st.markdown('<div class="page-view-enter">', unsafe_allow_html=True)
-
-    if current == "Home":
-        render_home(navigate_to)
-    elif current == "Get Recommendations":
-        render_recommend()
-    elif current == "Explore Data":
-        render_explore()
-    elif current == "Model Performance":
-        render_performance()
-    elif current == "Methodology & Ethics":
-        render_methodology()
-
-    st.markdown('</div>', unsafe_allow_html=True)
+if current == "Home":
+    render_home(navigate_to)
+elif current == "Get Recommendations":
+    render_recommend()
+elif current == "Explore Data":
+    render_explore()
+elif current == "Model Performance":
+    render_performance()
+elif current == "Methodology & Ethics":
+    render_methodology()

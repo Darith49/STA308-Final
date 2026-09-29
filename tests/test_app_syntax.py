@@ -82,3 +82,40 @@ def test_all_views_import():
     assert hasattr(ev, "render_explore")
     assert hasattr(pv, "render_performance")
     assert hasattr(mv, "render_methodology")
+
+
+def test_apptest_navigation_and_recommendations():
+    """Verify Streamlit AppTest runs cleanly, switches pages, and does not duplicate widgets."""
+    from streamlit.testing.v1 import AppTest
+
+    at = AppTest.from_file(os.path.join(BASE_DIR, "app", "app.py"), default_timeout=30)
+    at.run()
+    assert at.session_state["current_page"] == "Home"
+
+    # Switch to Recommendations view
+    at.sidebar.radio[0].set_value("Get Recommendations").run()
+    assert at.session_state["current_page"] == "Get Recommendations"
+
+    # Exactly 5 buttons: 4 archetype presets + 1 recalculate button
+    assert len(at.button) == 5
+
+    # Exactly 6 expanders: CSV upload + 3 explanations + full catalog + blocked electives
+    assert len(at.expander) == 6
+
+    # Test archetype preset click
+    at.button[0].click().run()
+    assert at.session_state["profile_version"] == 1
+    assert len(at.button) == 5
+    assert len(at.expander) == 6
+
+    # Switch to Cohort Exploration
+    at.sidebar.radio[0].set_value("Explore Data").run()
+    assert at.session_state["current_page"] == "Explore Data"
+
+    # Switch to Model Performance
+    at.sidebar.radio[0].set_value("Model Performance").run()
+    assert at.session_state["current_page"] == "Model Performance"
+
+    # Switch to Methodology & Ethics
+    at.sidebar.radio[0].set_value("Methodology & Ethics").run()
+    assert at.session_state["current_page"] == "Methodology & Ethics"

@@ -410,7 +410,7 @@ def inject_custom_css():
         @keyframes pageFadeSlideUp {{
             0% {{
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(8px);
             }}
             100% {{
                 opacity: 1;
@@ -418,9 +418,18 @@ def inject_custom_css():
             }}
         }}
 
-        .page-view-enter {{
-            animation: pageFadeSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+        .page-view-enter,
+        div[data-testid="stMainBlockContainer"] > div:first-child {{
+            animation: pageFadeSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
             will-change: transform, opacity;
+        }}
+
+        /* Clean Card Styling for Native Streamlit Border Containers */
+        div[data-testid="stVerticalBlockBorderWrapper"] > div {{
+            border-color: {CLAUDE['hairline']} !important;
+            border-radius: 12px !important;
+            background-color: {CLAUDE['surface_card']} !important;
+            padding: 1.2rem 1.4rem !important;
         }}
 
         /* Smooth tab switching inside views */

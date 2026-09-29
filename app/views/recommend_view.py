@@ -61,6 +61,13 @@ def render_recommend():
         # Pre-compute initial recommendation on load for instant professional presentation
         st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
 
+    if "profile_version" not in st.session_state:
+        st.session_state.profile_version = 0
+    if "processed_upload_sig" not in st.session_state:
+        st.session_state.processed_upload_sig = None
+    if "upload_status" not in st.session_state:
+        st.session_state.upload_status = None
+
     # 1-Click Preset Archetype Selector Band
     st.markdown("<span style='font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #8e8b82; letter-spacing: 0.06em;'>Quick Demo Profiles (1-Click Load)</span>", unsafe_allow_html=True)
     p_col1, p_col2, p_col3, p_col4 = st.columns([1.2, 1.2, 1.2, 0.8])
@@ -69,24 +76,28 @@ def render_recommend():
         if st.button("🔬 Quantitative Specialist", use_container_width=True, help="High math, statistics, and physics"):
             st.session_state.input_grades = dict(sample_profiles["Quantitative Thinker"])
             st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
+            st.session_state.profile_version += 1
             st.rerun()
 
     with p_col2:
         if st.button("💻 Applied Tech & Computing", use_container_width=True, help="Peak programming and algorithms"):
             st.session_state.input_grades = dict(sample_profiles["Applied Tech & Computational"])
             st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
+            st.session_state.profile_version += 1
             st.rerun()
 
     with p_col3:
         if st.button("⚖️ Socio-Economic Scholar", use_container_width=True, help="High economics, writing, and empirical analysis"):
             st.session_state.input_grades = dict(sample_profiles["Balanced Socio-Economic Scholar"])
             st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
+            st.session_state.profile_version += 1
             st.rerun()
 
     with p_col4:
         if st.button("↺ Reset (75)", use_container_width=True, help="Reset all subjects to cohort average (75)"):
             st.session_state.input_grades = {s: 75.0 for s in CORE_SUBJECTS}
             st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
+            st.session_state.profile_version += 1
             st.rerun()
 
     # Expandable CSV Upload
@@ -94,23 +105,44 @@ def render_recommend():
         st.write("Upload a CSV with columns: `Calculus, Statistics, Programming, English, Physics, Economics`")
         u_col1, u_col2 = st.columns([2, 1])
         with u_col1:
-            uploaded_file = st.file_uploader("Upload CSV file", type=["csv"], label_visibility="collapsed")
+            uploaded_file = st.file_uploader(
+                "Upload CSV file",
+                type=["csv"],
+                label_visibility="collapsed",
+                key="csv_grade_uploader"
+            )
             if uploaded_file is not None:
-                try:
-                    uploaded_df = pd.read_csv(uploaded_file)
-                    missing_cols = [c for c in CORE_SUBJECTS if c not in uploaded_df.columns]
-                    if missing_cols:
-                        st.error(f"Missing required columns: {', '.join(missing_cols)}")
-                    else:
-                        first_row = uploaded_df.iloc[0].to_dict()
-                        for subj in CORE_SUBJECTS:
-                            val = first_row.get(subj)
-                            st.session_state.input_grades[subj] = float(val) if pd.notna(val) else None
-                        st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
-                        st.success("Successfully loaded and generated recommendations from CSV!")
-                        st.rerun()
-                except Exception as e:
-                    st.error(f"CSV Parse Error: {str(e)}")
+                file_sig = f"{uploaded_file.name}_{uploaded_file.size}"
+                if st.session_state.processed_upload_sig != file_sig:
+                    try:
+                        uploaded_file.seek(0)
+                        uploaded_df = pd.read_csv(uploaded_file)
+                        missing_cols = [c for c in CORE_SUBJECTS if c not in uploaded_df.columns]
+                        if missing_cols:
+                            st.session_state.upload_status = ("error", f"Missing required columns: {', '.join(missing_cols)}")
+                        else:
+                            first_row = uploaded_df.iloc[0].to_dict()
+                            for subj in CORE_SUBJECTS:
+                                val = first_row.get(subj)
+                                st.session_state.input_grades[subj] = float(val) if pd.notna(val) else None
+                            st.session_state.recommendation_result = recommend(st.session_state.input_grades, top_n=3, w1=0.70)
+                            st.session_state.processed_upload_sig = file_sig
+                            st.session_state.upload_status = ("success", f"Successfully loaded '{uploaded_file.name}' and generated recommendations!")
+                            st.session_state.profile_version += 1
+                            st.rerun()
+                    except Exception as e:
+                        st.session_state.upload_status = ("error", f"CSV Parse Error: {str(e)}")
+            else:
+                st.session_state.processed_upload_sig = None
+                st.session_state.upload_status = None
+
+            if st.session_state.upload_status:
+                status_type, msg = st.session_state.upload_status
+                if status_type == "success":
+                    st.success(msg)
+                else:
+                    st.error(msg)
+
         with u_col2:
             sample_df = pd.DataFrame([sample_profiles["Quantitative Thinker"]])
             csv_buffer = sample_df.to_csv(index=False).encode('utf-8')
@@ -124,57 +156,62 @@ def render_recommend():
 
     # Core Grades Input Card Container
     st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div style="background: {CLAUDE['surface_card']}; border: 1px solid {CLAUDE['hairline']}; border-radius: 12px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem;">
+    with st.container(border=True):
+        st.markdown(
+            f"""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 1px solid {CLAUDE['hairline']}; padding-bottom: 0.5rem;">
                 <span style="font-weight: 600; color: {CLAUDE['ink']}; font-size: 0.95rem;">Foundation Subject Grades</span>
                 <span style="font-size: 0.8rem; color: {CLAUDE['body_muted']};">Valid scale: 0.0 – 100.0 (blank allows up to 2 for imputation)</span>
             </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    curr_grades = st.session_state.input_grades
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        calc_val = st.number_input(
-            "Calculus", min_value=0.0, max_value=100.0,
-            value=float(curr_grades.get("Calculus", 85.0)) if curr_grades.get("Calculus") is not None else None,
-            step=0.5, help="Differential & integral calculus"
-        )
-        stats_val = st.number_input(
-            "Statistics", min_value=0.0, max_value=100.0,
-            value=float(curr_grades.get("Statistics", 88.0)) if curr_grades.get("Statistics") is not None else None,
-            step=0.5, help="Probability theory & statistical inference"
+            """,
+            unsafe_allow_html=True
         )
 
-    with col2:
-        prog_val = st.number_input(
-            "Programming", min_value=0.0, max_value=100.0,
-            value=float(curr_grades.get("Programming", 92.0)) if curr_grades.get("Programming") is not None else None,
-            step=0.5, help="Algorithms & object-oriented programming"
-        )
-        engl_val = st.number_input(
-            "English", min_value=0.0, max_value=100.0,
-            value=float(curr_grades.get("English", 76.0)) if curr_grades.get("English") is not None else None,
-            step=0.5, help="Academic discourse & technical writing"
-        )
+        curr_grades = st.session_state.input_grades
+        p_ver = st.session_state.profile_version
+        col1, col2, col3 = st.columns(3)
 
-    with col3:
-        phys_val = st.number_input(
-            "Physics", min_value=0.0, max_value=100.0,
-            value=float(curr_grades.get("Physics", 84.0)) if curr_grades.get("Physics") is not None else None,
-            step=0.5, help="Classical mechanics & physical modeling"
-        )
-        econ_val = st.number_input(
-            "Economics", min_value=0.0, max_value=100.0,
-            value=float(curr_grades.get("Economics", 78.0)) if curr_grades.get("Economics") is not None else None,
-            step=0.5, help="Micro & macroeconomic analysis"
-        )
+        with col1:
+            calc_val = st.number_input(
+                "Calculus", min_value=0.0, max_value=100.0,
+                value=float(curr_grades.get("Calculus", 85.0)) if curr_grades.get("Calculus") is not None else None,
+                step=0.5, help="Differential & integral calculus",
+                key=f"input_calc_{p_ver}"
+            )
+            stats_val = st.number_input(
+                "Statistics", min_value=0.0, max_value=100.0,
+                value=float(curr_grades.get("Statistics", 88.0)) if curr_grades.get("Statistics") is not None else None,
+                step=0.5, help="Probability theory & statistical inference",
+                key=f"input_stats_{p_ver}"
+            )
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        with col2:
+            prog_val = st.number_input(
+                "Programming", min_value=0.0, max_value=100.0,
+                value=float(curr_grades.get("Programming", 92.0)) if curr_grades.get("Programming") is not None else None,
+                step=0.5, help="Algorithms & object-oriented programming",
+                key=f"input_prog_{p_ver}"
+            )
+            engl_val = st.number_input(
+                "English", min_value=0.0, max_value=100.0,
+                value=float(curr_grades.get("English", 76.0)) if curr_grades.get("English") is not None else None,
+                step=0.5, help="Academic discourse & technical writing",
+                key=f"input_engl_{p_ver}"
+            )
+
+        with col3:
+            phys_val = st.number_input(
+                "Physics", min_value=0.0, max_value=100.0,
+                value=float(curr_grades.get("Physics", 84.0)) if curr_grades.get("Physics") is not None else None,
+                step=0.5, help="Classical mechanics & physical modeling",
+                key=f"input_phys_{p_ver}"
+            )
+            econ_val = st.number_input(
+                "Economics", min_value=0.0, max_value=100.0,
+                value=float(curr_grades.get("Economics", 78.0)) if curr_grades.get("Economics") is not None else None,
+                step=0.5, help="Micro & macroeconomic analysis",
+                key=f"input_econ_{p_ver}"
+            )
 
     input_dict = {
         "Calculus": calc_val,
